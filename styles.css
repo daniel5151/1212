@@ -73,7 +73,6 @@ h1 {
     background: rgba(238, 228, 218, 0.35);
 }
 
-/*Actual Pieces*/
 .chunk {
     width: 46px;
     height: 46px;
@@ -92,6 +91,11 @@ h1 {
     background: inherit !important;
 }
 
+/*Actual Pieces*/
+.drag-container {
+    height: 100%;
+    width: 100%;
+}
 .piece {
     margin: auto;
     position: relative;

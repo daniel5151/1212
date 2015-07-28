@@ -1,39 +1,115 @@
 var size = {
     chunk: 46,
-    chunkS: 32.5,
-    shape: {
-        ln2:[2,1],
-        ln3:[3,1],
-        ln4:[4,1],
-        ln5:[5,1],
-        sBlock:[1,1],
-        mBlock:[2,2],
-        lBlock:[3,3],
-        smallL:[2,2],
-        bigL:[3,3]
+    chunkS: 32.5
+}
+
+var Pieces = {
+    ln2:{
+        size:[2,1],
+        layout:[[1,1]],
+        color:'#000'
+    },
+    ln3:{
+        size:[3,1],
+        layout:[[1,1,1]],
+        color:'#111'
+    },
+    ln4:{
+        size:[4,1],
+        layout:[[1,1,1,1]],
+        color:'#222'
+    },
+    ln5:{
+        size:[5,1],
+        layout:[[1,1,1,1,1]],
+        color:'#333'
+    },
+    sBlock:{
+        size:[1,1],
+        layout:[[1]],
+        color:'#444'
+    },
+    mBlock:{
+        size:[2,2],
+        layout:[[1,1],
+                [1,1]],
+        color:'#555'
+    },
+    lBlock:{
+        size:[3,3],
+        layout:[[1,1,1],
+                [1,1,1],
+                [1,1,1]],
+        color:'#666'
+    },
+    smallL:{
+        size:[2,2],
+        layout:[[1,0],
+                [1,1]],
+        color:'#777'
+    },
+    bigL:{
+        size:[3,3],
+        layout:[[1,0,0],
+                [1,0,0],
+                [1,1,1]],
+        color:'#888'
+    },
+}
+
+function initPieceHtml () {
+    for (var piece in Pieces) {
+        var htmlRow = "<div class='chunk-row'></div>"
+        var htmlChunk = "<div class='chunk'></div>"
+        var htmlPlaceholder = "<div class='chunk placeholder'></div>"
+        
+        $('#invisible-template-container').append("<div class='piece "+piece+"'></div>")
+        
+        for (var row = 0; row < Pieces[piece].layout.length; row++) {
+            $('#invisible-template-container .'+piece).append(htmlRow)
+            for (var chunk = 0; chunk < Pieces[piece].layout[row].length; chunk++) {
+                if (Pieces[piece].layout[row][chunk] == 0) {
+                    $('#invisible-template-container .'+piece+' .chunk-row:last-child').append(htmlPlaceholder)
+                } else {
+                    $('#invisible-template-container .'+piece+' .chunk-row:last-child').append(htmlChunk)
+                }
+            }
+        }
     }
 }
 
+function spawnPiece (type, slot, rotation) {
+    $('#invisible-template-container .'+type).clone().appendTo('#s'+slot+' .drag-container')
+}
+
 function changePieceSize(piece, growShrink) {
-    var shapeType = $(piece).attr("class").split(' ')[1];
+    var pieceType = piece.attr("class").split(' ')[1];
     var newSize = (growShrink=='shrink') ? size.chunkS : size.chunk;
     
     
-    $(piece).width(newSize*size.shape[shapeType][0]+(size.shape[shapeType][0]-1)*2)
-    $(piece).height(newSize*size.shape[shapeType][1]+(size.shape[shapeType][1]-1)*2)
+    $(piece).width(newSize*Pieces[pieceType].size[0]+(Pieces[pieceType].size[0]-1)*2)
+    $(piece).height(newSize*Pieces[pieceType].size[1]+(Pieces[pieceType].size[1]-1)*2)
 
     $(piece).find('.chunk').height(newSize);
     $(piece).find('.chunk').width(newSize);
 }
 
 window.onload = function () {
-    $('.ln2').clone().appendTo('#s1')
-    $('.sBlock').clone().appendTo('#s2')
-    $('.bigL').clone().appendTo('#s3')
+    initPieceHtml();
     
-    $(".piece").draggable({
+    spawnPiece(pickRandomProperty(Pieces), 1)
+    spawnPiece(pickRandomProperty(Pieces), 2)
+    spawnPiece(pickRandomProperty(Pieces), 3)
+    
+    
+    var centerCursor = {
+        left:$(".drag-container").width()/2,
+        bottom:$(".drag-container").height()/2
+    }
+    
+    $(".drag-container").draggable({
         start: function() {
-            changePieceSize(this, 'grow')
+            changePieceSize($(this).find('.piece'), 'grow')
         },
         revert: function() {
             // check if it was a good drop, valid position and such.
@@ -45,16 +121,26 @@ window.onload = function () {
                 return false;
             } else {
                 // Shrink them back
-                changePieceSize(this, 'shrink')
+                changePieceSize($(this).find('.piece'), 'shrink')
                 
                 // Return the piece to starting position
                 $(this).data("uiDraggable").originalPosition = {
-                    top : '50%',
+                    top : 0,
                     left : 0
                 };
                 
                 return true;
             }
-        }
+        },
+        cursorAt:centerCursor
     });
+}
+
+function pickRandomProperty(obj) {
+    var result;
+    var count = 0;
+    for (var prop in obj)
+        if (Math.random() < 1/++count)
+           result = prop;
+    return result;
 }
