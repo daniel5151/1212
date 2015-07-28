@@ -27,6 +27,10 @@ function changePieceSize(piece, growShrink) {
 }
 
 window.onload = function () {
+    $('.ln2').clone().appendTo('#s1')
+    $('.sBlock').clone().appendTo('#s2')
+    $('.bigL').clone().appendTo('#s3')
+    
     $(".piece").draggable({
         start: function() {
             changePieceSize(this, 'grow')
