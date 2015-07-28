@@ -91,7 +91,6 @@ h1 {
     background: inherit !important;
 }
 
-/*Actual Pieces*/
 .drag-container {
     height: 100%;
     width: 100%;
@@ -102,6 +101,8 @@ h1 {
     top: 50%;
     transform: translateY(-50%);
 }
+
+/*Actual Pieces*/
 .piece .chunk {
     width: 32.5px;
     height: 32.5px;
