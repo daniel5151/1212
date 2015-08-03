@@ -1,7 +1,8 @@
 var sizes = {
     grid:[12,12],
     chunk: 46,
-    chunkS: 32.5
+    chunkS: 32.5,
+    spacing: 2,
 }
 
 var Pieces = {
@@ -84,18 +85,62 @@ function initPieceHtml() {
     var container = "#invisible-template-container ";
 
     for (var piece in Pieces) {
-        $(container).append("<div class='piece " + piece + "'></div>")
+        $(container).append(String.format("<div class='piece {0}'></div>",piece))
         for (var row = 0; row < Pieces[piece].layout.length; row++) {
-            $(container + ' .' + piece).append(htmlRow)
+            $(String.format("{0} .{1}", container, piece)).append(htmlRow)
             for (var chunk = 0; chunk < Pieces[piece].layout[row].length; chunk++) {
                 if (Pieces[piece].layout[row][chunk] == 0) {
-                    $(container + '.' + piece + ' .chunk-row:last-child').append(htmlPlaceholder)
+                    $(String.format("{0} .{1} .chunk-row:last-child", container, piece)).append(htmlPlaceholder)
                 } else {
-                    $(container + '.' + piece + ' .chunk-row:last-child').append(htmlChunk)
+                    $(String.format("{0} .{1} .chunk-row:last-child", container, piece)).append(htmlChunk)
                 }
             }
         }
     }
+}
+
+function updatePieceCSS() {
+    if ($("#chunkS_CSS").length > 0) {
+        for (var piece in Pieces) {
+            $("#"+piece+"_CSS").remove()
+        }
+    }
+    var genericChunkCSS = String.format("\
+        .piece .chunk {\
+            width: {0};\
+            height: {0};\
+        }", sizes.chunkS);
+    
+    $("<style>")
+    .prop("type", "text/css")
+    .prop("id", "chunkS_CSS")
+    .html(genericChunkCSS)
+    .appendTo("head");
+    
+    for (var piece in Pieces) {
+        var w = Pieces[piece].size[0]*sizes.chunkS + (Pieces[piece].size[0]-1)*2;
+        var h = Pieces[piece].size[1]*sizes.chunkS + (Pieces[piece].size[1]-1)*2;
+        var color = Pieces[piece].color;
+        
+        var pieceCSS = String.format("\
+            .{0} {\
+                width: {1};\
+                height: {2};\
+            }\
+            .{0} .chunk {\
+                background: {3};\
+            }", piece, w, h, color);
+        
+        $("<style>")
+        .prop("type", "text/css")
+        .prop("id", piece+"_CSS")
+        .html(pieceCSS)
+        .appendTo("head");
+    };
+    
+    $('.drag-container').each(function () {
+        changePieceSize($(this).find('.piece'), 'shrink')
+    });
 }
 
 function initGrid() {
@@ -112,28 +157,67 @@ function initGrid() {
 }
 
 function spawnPiece(type, slot, rotation) {
+    console.log(type, slot, rotation)
     $('#invisible-template-container .' + type).clone().appendTo('#s' + slot + ' .drag-container')
+    currentPieces[slot]={
+        type:type,
+        rotation:rotation
+    }
+    var rotatedPieceCSS = String.format("\
+        #s{0} .{1} {\
+            transform: translateY(-50%) rotate({2}deg)\
+        }", slot, type, rotation);
+    
+    $("<style>")
+    .prop("type", "text/css")
+    .prop("id", "s"+slot+"_rotation")
+    .html(rotatedPieceCSS)
+    .appendTo("head");
+}
+
+function removePiece(slot) {
+    $('#s'+slot+" .drag-container").empty();
+    $("#s"+slot+"_rotation").remove();
+    currentPieces[slot]='EMPTY'
 }
 
 function changePieceSize(piece, growShrink) {
+    if ( piece.attr("class") == undefined ) { return false }
+    
     var pieceType = piece.attr("class").split(' ')[1];
     var newSize = (growShrink == 'shrink') ? sizes.chunkS : sizes.chunk;
 
 
-    $(piece).width(newSize * Pieces[pieceType].size[0] + (Pieces[pieceType].size[0] - 1) * 2)
-    $(piece).height(newSize * Pieces[pieceType].size[1] + (Pieces[pieceType].size[1] - 1) * 2)
+    $(piece).css('width',newSize * Pieces[pieceType].size[0] + (Pieces[pieceType].size[0] - 1) * 2)
+    $(piece).css("height",newSize * Pieces[pieceType].size[1] + (Pieces[pieceType].size[1] - 1) * 2)
 
-    $(piece).find('.chunk').height(newSize);
-    $(piece).find('.chunk').width(newSize);
+    $(piece).find('.chunk').css('width',newSize);
+    $(piece).find('.chunk').css("height",newSize);
 }
 
-window.onload = function() {
+var currentPieces = {
+    1:{
+        type:'x',
+        rotation:90
+    },
+    2:{
+        type:'y',
+        rotation:90
+    },
+    3:{
+        type:'z',
+        rotation:90
+    }
+}
+
+function init() {
     initGrid()
     initPieceHtml();
-
-    spawnPiece(pickRandomProperty(Pieces), 1)
-    spawnPiece(pickRandomProperty(Pieces), 2)
-    spawnPiece(pickRandomProperty(Pieces), 3)
+    updatePieceCSS();
+    
+    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation())
+    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation())
+    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation())
 
 
     var centerCursor = {
@@ -170,6 +254,7 @@ window.onload = function() {
     });
 }
 
+// Utilities
 function pickRandomProperty(obj) {
     var result;
     var count = 0;
@@ -178,3 +263,26 @@ function pickRandomProperty(obj) {
             result = prop;
     return result;
 }
+
+String.format = function() {
+    // The string containing the format items (e.g. "{0}")
+    // will and always has to be the first argument.
+	var theString = arguments[0];
+	
+	// start with the second argument (i = 1)
+	for (var i = 1; i < arguments.length; i++) {
+		// "gm" = RegEx options for Global search (more than one instance)
+		// and for Multiline search
+		var regEx = new RegExp("\\{" + (i - 1) + "\\}", "gm");
+		theString = theString.replace(regEx, arguments[i]);
+    }
+	
+	return theString;
+}
+
+function getRandomRotation() {
+  return (Math.floor(Math.random() * 4))*90;
+}
+
+// Run
+window.onload = init;

@@ -1,7 +1,6 @@
 body {
     font-family:Myriad Pro, sans-serif;
 	margin: auto;
-	overflow:hidden;
 	background: #FAF8EF;
     
     -webkit-touch-callout: none;
@@ -20,7 +19,6 @@ body {
 h1 {
     font-size: 3em;
 }
-
 
 /*Playing Field*/
 .box{
@@ -100,82 +98,4 @@ h1 {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
-}
-
-/*Actual Pieces*/
-.piece .chunk {
-    width: 32.5px;
-    height: 32.5px;
-}
-
-.sBlock {
-    width: 32.5px;
-    height: 32.5px;
-}
-.sBlock .chunk {
-    background: #555;
-}
-
-.mBlock {
-    width: calc(32.5px * 2 + 2px );
-    height: calc(32.5px * 2 + 2px );
-}
-.mBlock .chunk {
-    background: #4a6ad4;
-}
-
-.lBlock {
-    width: calc(32.5px * 3 + 4px );
-    height: calc(32.5px * 3 + 4px );
-}
-.lBlock .chunk {
-    background: #0bd022;
-}
-
-.ln2 {
-    height: 32.5px;
-    width: calc(32.5px * 2 + 2px );
-}
-.ln2 .chunk {
-    background: #d959d4;
-}
-
-.ln3 {
-    height: 32.5px;
-    width: calc(32.5px * 3 + 4px );
-}
-.ln3 .chunk {
-    background: #d98559;
-}
-
-.ln4 {
-    height: 32.5px;
-    width: calc(32.5px * 4 + 6px );
-}
-.ln4 .chunk {
-    background: #d959d4;
-} 
-
-.ln5 {
-    height: 32.5px;
-    width: calc(32.5px * 5 + 8px);
-}
-.ln5 .chunk {
-    background: #af7144;
-}
-
-.smallL {
-    width: calc(32.5px * 2 + 2px );
-    height: calc(32.5px * 2 + 2px );
-}
-.smallL .chunk {
-    background: rgb(52, 105, 178);
-}
-
-.bigL {
-    width: calc(32.5px * 3 + 4px );
-    height: calc(32.5px * 3 + 4px );
-}
-.bigL .chunk {
-    background: #9060dd;
 }
