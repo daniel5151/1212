@@ -4,7 +4,7 @@ var sizes = {
         spacing:2
     },
     smallScreen:{
-        chunk:27,
+        chunk:23,
         spacing:1
     },
     grid: [12, 12],
