@@ -23,7 +23,7 @@ h1 {
 /*Playing Field*/
 .box{
 	position: relative;
-	width: 600px;		/* desired width */
+    width: 600px;
     margin: auto;
 }
 .box:before{
@@ -46,29 +46,7 @@ h1 {
 }
 
 .grid-row {
-    margin-bottom: 2px;
     height: 46px;
-}
-
-/*Pieces spawn area*/
-.pieces-container {
-    width: 600px;
-    height: 200px;
-    margin: auto;
-    margin-top: 25;
-    background: #CDC1B4;
-    border-radius: 20px;
-}
-
-.slot {
-    width: 30%;
-    height: 90%;
-    margin-top: 1.75%;
-    margin-left: 2.5%;
-    float: left;
-    
-    border-radius: 10%;
-    background: rgba(238, 228, 218, 0.35);
 }
 
 .chunk {
@@ -85,6 +63,28 @@ h1 {
     margin-right: 0;
 }
 
+/*Pieces spawn area*/
+.pieces-container {
+    width: 600px;
+    height: 200px;
+    margin: auto;
+    margin-top: 20px;
+    background: #CDC1B4;
+    border-radius: 20px;
+}
+
+.slot {
+    width: 30%;
+    height: 90%;
+    margin-top: 1.75%;
+    margin-left: 2.5%;
+    float: left;
+    
+    border-radius: 10%;
+    background: rgba(238, 228, 218, 0.35);
+}
+
+/*Piece generics*/
 .placeholder {
     background: inherit !important;
 }
@@ -98,4 +98,50 @@ h1 {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
+}
+
+/*Small Screens*/
+@media screen and (max-width: 600px) {
+    .box{
+        position: relative;
+        width: 360px;		/* desired width */
+        margin: auto;
+    }
+    
+    .grid-container{
+        position:  absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+
+        padding: 2%;
+
+        background: #CDC1B4;
+        border-radius: 3%;
+    }
+
+    .grid-row {
+        height: 27.6px;
+    }
+    
+    .chunk {
+        width: 27.6px;
+        height: 27.6px;
+        background: rgba(238, 228, 218, 0.35);
+        border-radius: 20%; 
+
+        float: left;
+        margin-right: 1px;
+        margin-bottom: 1px;
+    }
+    
+    .pieces-container {
+        width: 360px;
+        height: 120px;
+        margin: auto;
+        margin-top: 10px;
+        background: #CDC1B4;
+        border-radius: 10px;
+    }
 }

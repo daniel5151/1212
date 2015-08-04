@@ -1,5 +1,5 @@
 var sizes = {
-    grid:[12,12],
+    grid: [12, 12],
     chunk: 46,
     chunkS: 32.5,
     spacing: 2,
@@ -85,7 +85,7 @@ function initPieceHtml() {
     var container = "#invisible-template-container ";
 
     for (var piece in Pieces) {
-        $(container).append(String.format("<div class='piece {0}'></div>",piece))
+        $(container).append(String.format("<div class='piece {0}'></div>", piece))
         for (var row = 0; row < Pieces[piece].layout.length; row++) {
             $(String.format("{0} .{1}", container, piece)).append(htmlRow)
             for (var chunk = 0; chunk < Pieces[piece].layout[row].length; chunk++) {
@@ -99,29 +99,35 @@ function initPieceHtml() {
     }
 }
 
-function updatePieceCSS() {
+function updateCSS() {
+    // First, check for existing CSS and delete it.
+    // How else are you going to update it?
     if ($("#chunkS_CSS").length > 0) {
+        $("#chunkS_CSS").remove()
         for (var piece in Pieces) {
-            $("#"+piece+"_CSS").remove()
+            $("#" + piece + "_CSS").remove()
         }
     }
+
+    // Generic piece chunk CSS
     var genericChunkCSS = String.format("\
         .piece .chunk {\
             width: {0};\
             height: {0};\
         }", sizes.chunkS);
-    
+
     $("<style>")
-    .prop("type", "text/css")
-    .prop("id", "chunkS_CSS")
-    .html(genericChunkCSS)
-    .appendTo("head");
-    
+        .prop("type", "text/css")
+        .prop("id", "chunkS_CSS")
+        .html(genericChunkCSS)
+        .appendTo("head");
+
+    // Piece CSS
     for (var piece in Pieces) {
-        var w = Pieces[piece].size[0]*sizes.chunkS + (Pieces[piece].size[0]-1)*2;
-        var h = Pieces[piece].size[1]*sizes.chunkS + (Pieces[piece].size[1]-1)*2;
+        var w = Pieces[piece].size[0] * sizes.chunkS + (Pieces[piece].size[0] - 1) * 2;
+        var h = Pieces[piece].size[1] * sizes.chunkS + (Pieces[piece].size[1] - 1) * 2;
         var color = Pieces[piece].color;
-        
+
         var pieceCSS = String.format("\
             .{0} {\
                 width: {1};\
@@ -130,14 +136,15 @@ function updatePieceCSS() {
             .{0} .chunk {\
                 background: {3};\
             }", piece, w, h, color);
-        
+
         $("<style>")
-        .prop("type", "text/css")
-        .prop("id", piece+"_CSS")
-        .html(pieceCSS)
-        .appendTo("head");
+            .prop("type", "text/css")
+            .prop("id", piece + "_CSS")
+            .html(pieceCSS)
+            .appendTo("head");
     };
-    
+
+    // Update existing elements to the new CSS
     $('.drag-container').each(function () {
         changePieceSize($(this).find('.piece'), 'shrink')
     });
@@ -147,7 +154,7 @@ function initGrid() {
     // Just for readability
     var htmlRow = "<div class='grid-row'>";
     var htmlChunk = "<div class='chunk'></div>";
-    
+
     for (var row = 0; row < sizes.grid[1]; row++) {
         $('.grid-container').append(htmlRow)
         for (var chunk = 0; chunk < sizes.grid[0]; chunk++) {
@@ -159,62 +166,64 @@ function initGrid() {
 function spawnPiece(type, slot, rotation) {
     console.log(type, slot, rotation)
     $('#invisible-template-container .' + type).clone().appendTo('#s' + slot + ' .drag-container')
-    currentPieces[slot]={
-        type:type,
-        rotation:rotation
+    currentPieces[slot] = {
+        type: type,
+        rotation: rotation
     }
     var rotatedPieceCSS = String.format("\
         #s{0} .{1} {\
             transform: translateY(-50%) rotate({2}deg)\
         }", slot, type, rotation);
-    
+
     $("<style>")
-    .prop("type", "text/css")
-    .prop("id", "s"+slot+"_rotation")
-    .html(rotatedPieceCSS)
-    .appendTo("head");
+        .prop("type", "text/css")
+        .prop("id", "s" + slot + "_rotation")
+        .html(rotatedPieceCSS)
+        .appendTo("head");
 }
 
 function removePiece(slot) {
-    $('#s'+slot+" .drag-container").empty();
-    $("#s"+slot+"_rotation").remove();
-    currentPieces[slot]='EMPTY'
+    $('#s' + slot + " .drag-container").empty();
+    $("#s" + slot + "_rotation").remove();
+    currentPieces[slot] = 'EMPTY'
 }
 
 function changePieceSize(piece, growShrink) {
-    if ( piece.attr("class") == undefined ) { return false }
-    
+    if (piece.attr("class") == undefined) {
+        return false
+    }
+
     var pieceType = piece.attr("class").split(' ')[1];
     var newSize = (growShrink == 'shrink') ? sizes.chunkS : sizes.chunk;
 
 
-    $(piece).css('width',newSize * Pieces[pieceType].size[0] + (Pieces[pieceType].size[0] - 1) * 2)
-    $(piece).css("height",newSize * Pieces[pieceType].size[1] + (Pieces[pieceType].size[1] - 1) * 2)
+    $(piece).css('width', newSize * Pieces[pieceType].size[0] + (Pieces[pieceType].size[0] - 1) * 2)
+    $(piece).css("height", newSize * Pieces[pieceType].size[1] + (Pieces[pieceType].size[1] - 1) * 2)
 
-    $(piece).find('.chunk').css('width',newSize);
-    $(piece).find('.chunk').css("height",newSize);
+    $(piece).find('.chunk').css('width', newSize);
+    $(piece).find('.chunk').css("height", newSize);
 }
 
 var currentPieces = {
-    1:{
-        type:'x',
-        rotation:90
+    1: {
+        type: 'x',
+        rotation: 90
     },
-    2:{
-        type:'y',
-        rotation:90
+    2: {
+        type: 'y',
+        rotation: 90
     },
-    3:{
-        type:'z',
-        rotation:90
+    3: {
+        type: 'z',
+        rotation: 90
     }
 }
 
 function init() {
     initGrid()
     initPieceHtml();
-    updatePieceCSS();
-    
+    updateCSS();
+
     spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation())
     spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation())
     spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation())
@@ -226,10 +235,10 @@ function init() {
     }
 
     $(".drag-container").draggable({
-        start: function() {
+        start: function () {
             changePieceSize($(this).find('.piece'), 'grow')
         },
-        revert: function() {
+        revert: function () {
             // check if it was a good drop, valid position and such.
             var allGood = false;
 
@@ -264,24 +273,24 @@ function pickRandomProperty(obj) {
     return result;
 }
 
-String.format = function() {
+String.format = function () {
     // The string containing the format items (e.g. "{0}")
     // will and always has to be the first argument.
-	var theString = arguments[0];
-	
-	// start with the second argument (i = 1)
-	for (var i = 1; i < arguments.length; i++) {
-		// "gm" = RegEx options for Global search (more than one instance)
-		// and for Multiline search
-		var regEx = new RegExp("\\{" + (i - 1) + "\\}", "gm");
-		theString = theString.replace(regEx, arguments[i]);
+    var theString = arguments[0];
+
+    // start with the second argument (i = 1)
+    for (var i = 1; i < arguments.length; i++) {
+        // "gm" = RegEx options for Global search (more than one instance)
+        // and for Multiline search
+        var regEx = new RegExp("\\{" + (i - 1) + "\\}", "gm");
+        theString = theString.replace(regEx, arguments[i]);
     }
-	
-	return theString;
+
+    return theString;
 }
 
 function getRandomRotation() {
-  return (Math.floor(Math.random() * 4))*90;
+    return (Math.floor(Math.random() * 4)) * 90;
 }
 
 // Run
