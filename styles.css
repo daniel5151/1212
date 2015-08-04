@@ -39,7 +39,7 @@ h1 {
 	bottom: 0;
 	right: 0;
     
-    padding: 2%;
+    padding: 13px;
     
 	background: #CDC1B4;
     border-radius: 3%;
@@ -115,19 +115,19 @@ h1 {
         bottom: 0;
         right: 0;
 
-        padding: 2%;
+        padding: 12px;
 
         background: #CDC1B4;
         border-radius: 3%;
     }
 
     .grid-row {
-        height: 27.6px;
+        height: 27px;
     }
     
     .chunk {
-        width: 27.6px;
-        height: 27.6px;
+        width: 27px;
+        height: 27px;
         background: rgba(238, 228, 218, 0.35);
         border-radius: 20%; 
 

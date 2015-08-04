@@ -1,8 +1,27 @@
 var sizes = {
+    bigScreen:{
+        chunk:46,
+        spacing:2
+    },
+    smallScreen:{
+        chunk:27,
+        spacing:1
+    },
     grid: [12, 12],
-    chunk: 46,
-    chunkS: 32.5,
-    spacing: 2,
+    shrinkScale: 0.75
+}
+
+function initGrid() {
+    // Just for readability
+    var htmlRow = "<div class='grid-row'>";
+    var htmlChunk = "<div class='chunk'></div>";
+
+    for (var row = 0; row < sizes.grid[1]; row++) {
+        $('.grid-container').append(htmlRow)
+        for (var chunk = 0; chunk < sizes.grid[0]; chunk++) {
+            $('.grid-container .grid-row:last-child').append(htmlChunk)
+        }
+    }
 }
 
 var Pieces = {
@@ -76,7 +95,6 @@ var Pieces = {
         color: '#888'
     },
 }
-
 function initPieceHtml() {
     // Just for readability
     var htmlRow = "<div class='chunk-row'></div>";
@@ -99,70 +117,6 @@ function initPieceHtml() {
     }
 }
 
-function updateCSS() {
-    // First, check for existing CSS and delete it.
-    // How else are you going to update it?
-    if ($("#chunkS_CSS").length > 0) {
-        $("#chunkS_CSS").remove()
-        for (var piece in Pieces) {
-            $("#" + piece + "_CSS").remove()
-        }
-    }
-
-    // Generic piece chunk CSS
-    var genericChunkCSS = String.format("\
-        .piece .chunk {\
-            width: {0};\
-            height: {0};\
-        }", sizes.chunkS);
-
-    $("<style>")
-        .prop("type", "text/css")
-        .prop("id", "chunkS_CSS")
-        .html(genericChunkCSS)
-        .appendTo("head");
-
-    // Piece CSS
-    for (var piece in Pieces) {
-        var w = Pieces[piece].size[0] * sizes.chunkS + (Pieces[piece].size[0] - 1) * 2;
-        var h = Pieces[piece].size[1] * sizes.chunkS + (Pieces[piece].size[1] - 1) * 2;
-        var color = Pieces[piece].color;
-
-        var pieceCSS = String.format("\
-            .{0} {\
-                width: {1};\
-                height: {2};\
-            }\
-            .{0} .chunk {\
-                background: {3};\
-            }", piece, w, h, color);
-
-        $("<style>")
-            .prop("type", "text/css")
-            .prop("id", piece + "_CSS")
-            .html(pieceCSS)
-            .appendTo("head");
-    };
-
-    // Update existing elements to the new CSS
-    $('.drag-container').each(function () {
-        changePieceSize($(this).find('.piece'), 'shrink')
-    });
-}
-
-function initGrid() {
-    // Just for readability
-    var htmlRow = "<div class='grid-row'>";
-    var htmlChunk = "<div class='chunk'></div>";
-
-    for (var row = 0; row < sizes.grid[1]; row++) {
-        $('.grid-container').append(htmlRow)
-        for (var chunk = 0; chunk < sizes.grid[0]; chunk++) {
-            $('.grid-container .grid-row:last-child').append(htmlChunk)
-        }
-    }
-}
-
 function spawnPiece(type, slot, rotation) {
     console.log(type, slot, rotation)
     $('#invisible-template-container .' + type).clone().appendTo('#s' + slot + ' .drag-container')
@@ -181,27 +135,103 @@ function spawnPiece(type, slot, rotation) {
         .html(rotatedPieceCSS)
         .appendTo("head");
 }
-
 function removePiece(slot) {
     $('#s' + slot + " .drag-container").empty();
     $("#s" + slot + "_rotation").remove();
     currentPieces[slot] = 'EMPTY'
 }
-
 function changePieceSize(piece, growShrink) {
+    // Error handling
     if (piece.attr("class") == undefined) {
         return false
     }
-
+    var bigScreenSChunk =  sizes.bigScreen.chunk * sizes.shrinkScale;
+    var smallScreenSChunk = sizes.smallScreen.chunk * sizes.shrinkScale;
+    
     var pieceType = piece.attr("class").split(' ')[1];
-    var newSize = (growShrink == 'shrink') ? sizes.chunkS : sizes.chunk;
+    
+    if ($(window).width() < 600) {
+        var newSize = (growShrink == 'shrink') ? smallScreenSChunk : sizes.smallScreen.chunk;
+        var spacing = sizes.smallScreen.spacing;
+    } else {
+        var newSize = (growShrink == 'shrink') ? bigScreenSChunk : sizes.bigScreen.chunk;
+        var spacing = sizes.bigScreen.spacing;
+    }
 
 
-    $(piece).css('width', newSize * Pieces[pieceType].size[0] + (Pieces[pieceType].size[0] - 1) * 2)
-    $(piece).css("height", newSize * Pieces[pieceType].size[1] + (Pieces[pieceType].size[1] - 1) * 2)
+    $(piece).css('width', newSize * Pieces[pieceType].size[0] + (Pieces[pieceType].size[0] - 1) * spacing)
+    $(piece).css("height", newSize * Pieces[pieceType].size[1] + (Pieces[pieceType].size[1] - 1) * spacing)
 
     $(piece).find('.chunk').css('width', newSize);
     $(piece).find('.chunk').css("height", newSize);
+}
+
+function updateCSS() {
+    // First, check for existing CSS and delete it.
+    // How else are you going to update it?
+    if ($("#chunkS_CSS").length > 0) {
+        $("#chunkS_CSS").remove()
+        for (var piece in Pieces) {
+            $("#" + piece + "_CSS").remove()
+        }
+    }
+
+    // Generic piece chunk CSS
+    var bigScreenSChunk =  sizes.bigScreen.chunk * sizes.shrinkScale;
+    var smallScreenSChunk = sizes.smallScreen.chunk * sizes.shrinkScale;
+    
+    var genericPieceChunkCSS = String.format("\
+        .piece .chunk {\
+            width: {0};\
+            height: {0};\
+        }\
+        @media screen and (max-width: 600px) {\
+            .piece .chunk {\
+                width: {1};\
+                height: {1};\
+            }\
+        }", bigScreenSChunk, smallScreenSChunk);
+
+    $("<style>")
+        .prop("type", "text/css")
+        .prop("id", "chunkS_CSS")
+        .html(genericPieceChunkCSS)
+        .appendTo("head");
+
+    // Piece CSS
+    for (var piece in Pieces) {
+        var BigW = Pieces[piece].size[0] * bigScreenSChunk + (Pieces[piece].size[0] - 1) * sizes.bigScreen.spacing;
+        var BigH = Pieces[piece].size[1] * bigScreenSChunk + (Pieces[piece].size[1] - 1) * sizes.bigScreen.spacing;
+        var SmallW = Pieces[piece].size[0] * smallScreenSChunk + (Pieces[piece].size[0] - 1) * sizes.smallScreen.spacing;
+        var SmallH = Pieces[piece].size[1] * smallScreenSChunk + (Pieces[piece].size[1] - 1) * sizes.smallScreen.spacing;
+        var color = Pieces[piece].color;
+
+        var pieceCSS = String.format("\
+            .{0} {\
+                width: {2};\
+                height: {3};\
+            }\
+            .{0} .chunk {\
+                background: {1};\
+            }\
+            @media screen and (max-width: 600px) {\
+                .{0} {\
+                    width: {4};\
+                    height: {5};\
+                }\
+            }", piece, color, BigW, BigH, SmallW, SmallH);
+
+        $("<style>")
+            .prop("type", "text/css")
+            .prop("id", piece + "_CSS")
+            .html(pieceCSS)
+            .appendTo("head");
+    };
+
+    // Update existing elements to the new CSS
+    $('.drag-container').each(function () {
+        changePieceSize($(this).find('.piece'), 'shrink')
+    });
 }
 
 var currentPieces = {
@@ -228,10 +258,14 @@ function init() {
     spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation())
     spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation())
 
-
+    
+    $(window).resize(function() {
+        updateCSS();
+    });
+    
     var centerCursor = {
         left: $(".drag-container").width() / 2,
-        bottom: $(".drag-container").height() / 2
+        bottom: 0
     }
 
     $(".drag-container").draggable({
