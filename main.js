@@ -1,14 +1,32 @@
 var sizes = {
-    bigScreen:{
-        chunk:46,
-        spacing:2
+    bigScreen: {
+        chunk: 46,
+        SChunk: 34.5,
+        spacing: 2
     },
-    smallScreen:{
-        chunk:23,
-        spacing:1
+    smallScreen: {
+        chunk: 23,
+        SChunk: 17.25,
+        spacing: 1
     },
     grid: [12, 12],
     shrinkScale: 0.75
+}
+
+function getScreenType() {
+    if ($(window).height() >= $(window).width()) {
+        if ($(window).width() < 600) {
+            return 'smallScreen'
+        } else {
+            return 'bigScreen'
+        }
+    } else {
+        if ($(window).width() <= 820) {
+            return 'smallScreen'
+        } else {
+            return 'bigScreen'
+        }
+    }
 }
 
 function initGrid() {
@@ -95,6 +113,7 @@ var Pieces = {
         color: '#888'
     },
 }
+
 function initPieceHtml() {
     // Just for readability
     var htmlRow = "<div class='chunk-row'></div>";
@@ -138,31 +157,26 @@ function spawnPiece(type, slot, rotation) {
         .prop("id", "s" + slot + "_rotation")
         .html(rotatedPieceCSS)
         .appendTo("head");
+    
+    updateDragbox(slot);
 }
+
 function removePiece(slot) {
     $('#s' + slot + " .drag-container").empty();
     $("#s" + slot + "_rotation").remove();
     currentPieces[slot] = 'EMPTY'
 }
+
 function changePieceSize(piece, growShrink) {
     // Error handling
     if (piece.attr("class") == undefined) {
         return false
     }
-    var bigScreenSChunk =  sizes.bigScreen.chunk * sizes.shrinkScale;
-    var smallScreenSChunk = sizes.smallScreen.chunk * sizes.shrinkScale;
-    
+
     var pieceType = piece.attr("class").split(' ')[1];
+    var newSize = (growShrink == 'shrink') ? sizes[getScreenType()].SChunk : sizes[getScreenType()].chunk;
+    var spacing = sizes[getScreenType()].spacing;
     
-    if ($(window).width() < 600) {
-        var newSize = (growShrink == 'shrink') ? smallScreenSChunk : sizes.smallScreen.chunk;
-        var spacing = sizes.smallScreen.spacing;
-    } else {
-        var newSize = (growShrink == 'shrink') ? bigScreenSChunk : sizes.bigScreen.chunk;
-        var spacing = sizes.bigScreen.spacing;
-    }
-
-
     $(piece).css('width', newSize * Pieces[pieceType].size[0] + (Pieces[pieceType].size[0] - 1) * spacing)
     $(piece).css("height", newSize * Pieces[pieceType].size[1] + (Pieces[pieceType].size[1] - 1) * spacing)
 
@@ -170,7 +184,7 @@ function changePieceSize(piece, growShrink) {
     $(piece).find('.chunk').css("height", newSize);
 }
 
-function updateCSS() {
+function initCSS () {
     // First, check for existing CSS and delete it.
     // How else are you going to update it?
     if ($("#chunkS_CSS").length > 0) {
@@ -180,50 +194,13 @@ function updateCSS() {
         }
     }
 
-    // Generic piece chunk CSS
-    var bigScreenSChunk =  sizes.bigScreen.chunk * sizes.shrinkScale;
-    var smallScreenSChunk = sizes.smallScreen.chunk * sizes.shrinkScale;
-    
-    var genericPieceChunkCSS = String.format("\
-        .piece .chunk {\
-            width: {0};\
-            height: {0};\
-        }\
-        @media screen and (max-width: 600px) {\
-            .piece .chunk {\
-                width: {1};\
-                height: {1};\
-            }\
-        }", bigScreenSChunk, smallScreenSChunk);
-
-    $("<style>")
-        .prop("type", "text/css")
-        .prop("id", "chunkS_CSS")
-        .html(genericPieceChunkCSS)
-        .appendTo("head");
-
     // Piece CSS
     for (var piece in Pieces) {
-        var BigW = Pieces[piece].size[0] * bigScreenSChunk + (Pieces[piece].size[0] - 1) * sizes.bigScreen.spacing;
-        var BigH = Pieces[piece].size[1] * bigScreenSChunk + (Pieces[piece].size[1] - 1) * sizes.bigScreen.spacing;
-        var SmallW = Pieces[piece].size[0] * smallScreenSChunk + (Pieces[piece].size[0] - 1) * sizes.smallScreen.spacing;
-        var SmallH = Pieces[piece].size[1] * smallScreenSChunk + (Pieces[piece].size[1] - 1) * sizes.smallScreen.spacing;
         var color = Pieces[piece].color;
-
         var pieceCSS = String.format("\
-            .{0} {\
-                width: {2};\
-                height: {3};\
-            }\
             .{0} .chunk {\
                 background: {1};\
-            }\
-            @media screen and (max-width: 600px) {\
-                .{0} {\
-                    width: {4};\
-                    height: {5};\
-                }\
-            }", piece, color, BigW, BigH, SmallW, SmallH);
+            }", piece, color);
 
         $("<style>")
             .prop("type", "text/css")
@@ -231,57 +208,34 @@ function updateCSS() {
             .html(pieceCSS)
             .appendTo("head");
     };
-
-    // Update existing elements to the new CSS
-    $('.drag-container').each(function () {
-        changePieceSize($(this).find('.piece'), 'shrink')
-    });
 }
 
-var currentPieces = {
-    1: {
-        type: 'x',
-        rotation: 90
-    },
-    2: {
-        type: 'y',
-        rotation: 90
-    },
-    3: {
-        type: 'z',
-        rotation: 90
-    }
-}
-
-function reRoll() {
-    removePiece(1)
-    removePiece(2)
-    removePiece(3)
-    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation())
-    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation())
-    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation())
-}
-
-function init() {
-    initGrid()
-    initPieceHtml();
-    updateCSS();
-
-    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation())
-    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation())
-    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation())
-
+function updateDragbox(slot) {
+    if (currentPieces[slot] == 'EMPTY') { return false }
     
-    $(window).resize(function() {
-        updateCSS();
-    });
-    
-    var centerCursor = {
-        left: $(".drag-container").width() / 2,
-        bottom: 0
+    // You'd think finding where to place a cursor would be easy right?
+    // Guess again.
+    var centerCursor = false;
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        var pieceType = $("#s"+slot+" .drag-container").find('.piece').attr("class").split(' ')[1];
+        var rotation = (currentPieces[slot] == 90 || currentPieces[slot] == 270) ? 1 : 0;
+        
+        var pieceWidth = (sizes[getScreenType()].chunk *  Pieces[pieceType].size[rotation]);
+        var containerPieceWDiff = pieceWidth - $(".drag-container").width()
+        if (containerPieceWDiff > 0) {
+            centerCursor = {
+                left: ($(".drag-container").width()+containerPieceWDiff) / 2,
+                bottom: 0
+            }
+        } else {
+            centerCursor = {
+                left: $(".drag-container").width() / 2,
+                bottom: 0
+            }
+        }
     }
-
-    $(".drag-container").draggable({
+    
+    $("#s"+slot+" .drag-container").draggable({
         start: function () {
             changePieceSize($(this).find('.piece'), 'grow')
         },
@@ -306,7 +260,51 @@ function init() {
                 return true;
             }
         },
-        cursorAt: centerCursor
+        revertDuration: 250,
+        cursorAt: centerCursor,
+        scroll: false
+    });
+    changePieceSize($("#s"+slot+" .drag-container").find('.piece'), 'shrink')
+}
+
+var currentPieces = {
+    1: {
+        type: 'x',
+        rotation: 90
+    },
+    2: {
+        type: 'y',
+        rotation: 90
+    },
+    3: {
+        type: 'z',
+        rotation: 90
+    }
+}
+
+function Roll() {
+    removePiece(1)
+    removePiece(2)
+    removePiece(3)
+    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation())
+    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation())
+    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation())
+}
+
+function init() {
+    initGrid()
+    initPieceHtml();
+    initCSS();
+
+    Roll();
+
+    $(window).resize(function () {
+        updateDragbox(1)
+        updateDragbox(2)
+        updateDragbox(3)
+        $(".drag-container").each(function () {
+            changePieceSize($(this).find('.piece'), 'shrink')
+        })
     });
 }
 

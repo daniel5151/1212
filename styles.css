@@ -9,11 +9,20 @@ body {
        -moz-user-select: none;
         -ms-user-select: none;
             user-select: none;
+    
+    overflow-y: visible;
+    overflow-x: hidden;
+}
+
+#right {
+    margin-bottom: 2em;
 }
 
 #text {
-    margin-top: 1em;
+    margin: auto;
+    margin-top: .5em;
     text-align: center;
+    width: 80%;
 }
 
 h1 {
@@ -105,8 +114,8 @@ h1 {
          -o-transform: translateY(-50%);
 }
 
-/*Small Screens*/
-@media screen and (max-width: 600px) {
+/*Small Screens Vertical*/
+@media screen and (max-width: 600px) and (orientation: portrait) {
     .box{
         position: relative;
         width: 300px;		/* desired width */
@@ -149,5 +158,128 @@ h1 {
 		margin-bottom: 10px;
         background: #CDC1B4;
         border-radius: 10px;
+    }
+}
+
+/*Big Screens Horizontal*/
+@media screen and (min-width: 820px) and (orientation: landscape){
+    #game-container {
+        width: 820px;
+        height: 600px;
+        margin: auto;
+    }
+    
+    #left {
+        float: left;
+        width: 600px;
+    }
+    
+    #right {
+        float: left;
+        width: 220px;
+        margin-bottom: 2em;
+    }
+    
+    .box{
+        position: relative;
+        width: 600px;
+        margin: auto;
+        float: right;
+    }
+    
+    .pieces-container {
+        width: 200px;
+        height: 600px;
+        margin: auto;
+        background: #CDC1B4;
+        border-radius: 20px;
+        
+        float: left;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    
+    .slot {
+        width: 90%;
+        height: 30%;
+        margin-top: 15px;
+        margin-left: 10px;
+
+        border-radius: 10%;
+        background: rgba(238, 228, 218, 0.35);
+    }
+}
+
+/*Small Screens Horizontal*/
+@media screen and (max-width: 820px) and (orientation: landscape) {
+    #game-container {
+        width: 410px;
+        height: 300px;
+        margin: auto;
+    }
+    
+    #left {
+        float: left;
+        width: 300px;
+    }
+
+    #right {
+        float: left;
+        width: 110px;
+        margin-bottom: 2em;
+    }
+    
+    .box{
+        position: relative;
+        width: 300px;		/* desired width */
+        margin: auto;
+    }
+    
+    .grid-container{
+        position:  absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+
+        padding: 6px;
+
+        background: #CDC1B4;
+        border-radius: 3%;
+    }
+
+    .grid-row {
+        height: 23px;
+    }
+    
+    .chunk {
+        width: 23px;
+        height: 23px;
+        background: rgba(238, 228, 218, 0.35);
+        border-radius: 20%; 
+
+        float: left;
+        margin-right: 1px;
+        margin-bottom: 1px;
+    }
+    
+    .pieces-container {
+        width: 100px;
+        height: 300px;
+        margin: auto;
+        background: #CDC1B4;
+        border-radius: 10px;
+        
+        margin-left: 10px;
+    }
+    
+    .slot {
+        width: 90%;
+        height: 30%;
+        margin-top: 8px;
+        margin-left: 5px;
+
+        border-radius: 10%;
+        background: rgba(238, 228, 218, 0.35);
     }
 }
