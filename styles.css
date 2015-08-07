@@ -1,18 +1,14 @@
 body {
-    font-family:Myriad Pro, sans-serif;
+    font-family:"Clear Sans", "Helvetica Neue", Arial, sans-serif;
 	margin: auto;
 	background: #FAF8EF;
 	
     -webkit-touch-callout: none;
     -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-#container {
-	
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
 }
 
 #text {
@@ -102,7 +98,11 @@ h1 {
     margin: auto;
     position: relative;
     top: 50%;
-    transform: translateY(-50%);
+            transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+       -moz-transform: translateY(-50%);
+         -o-transform: translateY(-50%);
 }
 
 /*Small Screens*/

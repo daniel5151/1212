@@ -126,7 +126,11 @@ function spawnPiece(type, slot, rotation) {
     }
     var rotatedPieceCSS = String.format("\
         #s{0} .{1} {\
-            transform: translateY(-50%) rotate({2}deg)\
+            transform: translateY(-50%) rotate({2}deg);\
+            -ms-transform: translateY(-50%) rotate({2}deg);\
+            -webkit-transform: translateY(-50%) rotate({2}deg);\
+            -moz-transform: translateY(-50%) rotate({2}deg);\
+            -o-transform: translateY(-50%) rotate({2}deg);\
         }", slot, type, rotation);
 
     $("<style>")
@@ -247,6 +251,15 @@ var currentPieces = {
         type: 'z',
         rotation: 90
     }
+}
+
+function reRoll() {
+    removePiece(1)
+    removePiece(2)
+    removePiece(3)
+    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation())
+    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation())
+    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation())
 }
 
 function init() {
