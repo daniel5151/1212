@@ -88,6 +88,12 @@ var currentPieces = {
     2: 'EMPTY',
     3: 'EMPTY'
 };
+// Template for each slot 
+// slot: {
+//    type: type,
+//    rotation: rotation
+// }
+
 var grid;
 
 function initGridHtml() {
@@ -230,6 +236,25 @@ function updateDragbox(slot) {
     changePieceSize($("#s" + slot + " .drag-container").find('.piece'), 'shrink')
 }
 
+function checkValidDrop (drag_container) {
+    var slot = $(drag_container).parent().attr('id').match(/\d+/)[0];
+    var pieceType = currentPieces[slot].type;
+    var timesRotated = currentPieces[slot].rotation/90
+    
+    var pieceLayout = Pieces[pieceType].layout;
+    for (var i=0; i < timesRotated; i++ ) {
+        rotateArray(pieceLayout)
+    }
+    
+    // ROTATE ARRAY ONLY WORKS ON 2D ARRAYS
+    // FIX THIS
+    
+    
+    console.log(pieceLayout)
+    
+    return false;
+}
+
 function initDragboxes() {
     $(".drag-container").each(function () {
         $(this).draggable({
@@ -238,9 +263,9 @@ function initDragboxes() {
             },
             revert: function () {
                 // check if it was a good drop, valid position and such.
-                var allGood = false;
+                var validDrop = checkValidDrop(this);
 
-                if (allGood) {
+                if (validDrop) {
                     // actually drop it
                     // delete this thing
                     return false;
@@ -254,7 +279,7 @@ function initDragboxes() {
                         left: 0
                     };
 
-                    return true;
+                    return true; // please revert me
                 }
             },
             revertDuration: 250,
@@ -350,6 +375,21 @@ function getScreenType() {
         }
     }
 }
+
+function rotateArray (a) {
+    var n=a.length;
+    var tmp = 0;
+    for (var i=0; i<n/2; i++){
+        for (var j=i; j<n-i-1; j++){
+            tmp=a[i][j];
+            a[i][j]=a[j][n-i-1];
+            a[j][n-i-1]=a[n-i-1][n-j-1];
+            a[n-i-1][n-j-1]=a[n-j-1][i];
+            a[n-j-1][i]=tmp;
+        }
+    }
+    return a
+};
 
 // Run
 window.onload = init;
