@@ -12,36 +12,6 @@ var sizes = {
     grid: [12, 12],
     shrinkScale: 0.75
 }
-
-function getScreenType() {
-    if ($(window).height() >= $(window).width()) {
-        if ($(window).width() < 600) {
-            return 'smallScreen'
-        } else {
-            return 'bigScreen'
-        }
-    } else {
-        if ($(window).width() <= 820) {
-            return 'smallScreen'
-        } else {
-            return 'bigScreen'
-        }
-    }
-}
-
-function initGrid() {
-    // Just for readability
-    var htmlRow = "<div class='grid-row'>";
-    var htmlChunk = "<div class='chunk'></div>";
-
-    for (var row = 0; row < sizes.grid[1]; row++) {
-        $('.grid-container').append(htmlRow)
-        for (var chunk = 0; chunk < sizes.grid[0]; chunk++) {
-            $('.grid-container .grid-row:last-child').append(htmlChunk)
-        }
-    }
-}
-
 var Pieces = {
     ln2: {
         size: [2, 1],
@@ -112,6 +82,25 @@ var Pieces = {
         ],
         color: '#888'
     },
+};
+var currentPieces = {
+    1: 'EMPTY',
+    2: 'EMPTY',
+    3: 'EMPTY'
+};
+var grid;
+
+function initGridHtml() {
+    // Just for readability
+    var htmlRow = "<div class='grid-row'>";
+    var htmlChunk = "<div class='chunk'></div>";
+
+    for (var row = 0; row < sizes.grid[1]; row++) {
+        $('.grid-container').append(htmlRow)
+        for (var chunk = 0; chunk < sizes.grid[0]; chunk++) {
+            $('.grid-container .grid-row:last-child').append(htmlChunk)
+        }
+    }
 }
 
 function initPieceHtml() {
@@ -157,7 +146,7 @@ function spawnPiece(type, slot, rotation) {
         .prop("id", "s" + slot + "_rotation")
         .html(rotatedPieceCSS)
         .appendTo("head");
-    
+
     updateDragbox(slot);
 }
 
@@ -176,7 +165,7 @@ function changePieceSize(piece, growShrink) {
     var pieceType = piece.attr("class").split(' ')[1];
     var newSize = (growShrink == 'shrink') ? sizes[getScreenType()].SChunk : sizes[getScreenType()].chunk;
     var spacing = sizes[getScreenType()].spacing;
-    
+
     $(piece).css('width', newSize * Pieces[pieceType].size[0] + (Pieces[pieceType].size[0] - 1) * spacing)
     $(piece).css("height", newSize * Pieces[pieceType].size[1] + (Pieces[pieceType].size[1] - 1) * spacing)
 
@@ -184,7 +173,7 @@ function changePieceSize(piece, growShrink) {
     $(piece).find('.chunk').css("height", newSize);
 }
 
-function initCSS () {
+function initCSS() {
     // First, check for existing CSS and delete it.
     // How else are you going to update it?
     if ($("#chunkS_CSS").length > 0) {
@@ -211,20 +200,21 @@ function initCSS () {
 }
 
 function updateDragbox(slot) {
-    if (currentPieces[slot] == 'EMPTY') { return false }
-    
+    if (currentPieces[slot] == 'EMPTY') {
+        return false
+    }
     // You'd think finding where to place a cursor would be easy right?
     // Guess again.
     var centerCursor = false;
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        var pieceType = $("#s"+slot+" .drag-container").find('.piece').attr("class").split(' ')[1];
+        var pieceType = $("#s" + slot + " .drag-container").find('.piece').attr("class").split(' ')[1];
         var rotation = (currentPieces[slot] == 90 || currentPieces[slot] == 270) ? 1 : 0;
-        
-        var pieceWidth = (sizes[getScreenType()].chunk *  Pieces[pieceType].size[rotation]);
+
+        var pieceWidth = (sizes[getScreenType()].chunk * Pieces[pieceType].size[rotation]);
         var containerPieceWDiff = pieceWidth - $(".drag-container").width()
         if (containerPieceWDiff > 0) {
             centerCursor = {
-                left: ($(".drag-container").width()+containerPieceWDiff) / 2,
+                left: ($(".drag-container").width() + containerPieceWDiff) / 2,
                 bottom: 0
             }
         } else {
@@ -235,51 +225,44 @@ function updateDragbox(slot) {
         }
     }
     
-    $("#s"+slot+" .drag-container").draggable({
-        start: function () {
-            changePieceSize($(this).find('.piece'), 'grow')
-        },
-        revert: function () {
-            // check if it was a good drop, valid position and such.
-            var allGood = false;
-
-            if (allGood) {
-                // actually drop it
-                // delete this thing
-                return false;
-            } else {
-                // Shrink them back
-                changePieceSize($(this).find('.piece'), 'shrink')
-
-                // Return the piece to starting position
-                $(this).data("uiDraggable").originalPosition = {
-                    top: 0,
-                    left: 0
-                };
-
-                return true;
-            }
-        },
-        revertDuration: 250,
-        cursorAt: centerCursor,
-        scroll: false
-    });
-    changePieceSize($("#s"+slot+" .drag-container").find('.piece'), 'shrink')
+    $("#s" + slot + " .drag-container").draggable( "option", "cursorAt", centerCursor );
+    
+    changePieceSize($("#s" + slot + " .drag-container").find('.piece'), 'shrink')
 }
 
-var currentPieces = {
-    1: {
-        type: 'x',
-        rotation: 90
-    },
-    2: {
-        type: 'y',
-        rotation: 90
-    },
-    3: {
-        type: 'z',
-        rotation: 90
-    }
+function initDragboxes() {
+    $(".drag-container").each(function () {
+        $(this).draggable({
+            start: function () {
+                changePieceSize($(this).find('.piece'), 'grow')
+            },
+            revert: function () {
+                // check if it was a good drop, valid position and such.
+                var allGood = false;
+
+                if (allGood) {
+                    // actually drop it
+                    // delete this thing
+                    return false;
+                } else {
+                    // Shrink them back
+                    changePieceSize($(this).find('.piece'), 'shrink')
+
+                    // Return the piece to starting position
+                    $(this).data("uiDraggable").originalPosition = {
+                        top: 0,
+                        left: 0
+                    };
+
+                    return true;
+                }
+            },
+            revertDuration: 250,
+            scroll: false
+        });
+        var currSlot = $(this).parent().attr('id').match(/\d+/)[0]
+        updateDragbox(currSlot)
+    });
 }
 
 function Roll() {
@@ -291,10 +274,24 @@ function Roll() {
     spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation())
 }
 
+function initGrid(size) {
+    // Stackoverflow Wizardry.
+    grid = Array.apply(null, Array(size[1]))
+        .map(function () {
+            return Array.apply(null, Array(size[0])).map(function () {
+                return 0
+            });
+        });
+}
+
 function init() {
-    initGrid()
+    initGridHtml()
     initPieceHtml();
     initCSS();
+    
+    initDragboxes();
+    
+    initGrid(sizes.grid);
 
     Roll();
 
@@ -336,6 +333,22 @@ String.format = function () {
 
 function getRandomRotation() {
     return (Math.floor(Math.random() * 4)) * 90;
+}
+
+function getScreenType() {
+    if ($(window).height() >= $(window).width()) {
+        if ($(window).width() < 600) {
+            return 'smallScreen'
+        } else {
+            return 'bigScreen'
+        }
+    } else {
+        if ($(window).width() <= 820) {
+            return 'smallScreen'
+        } else {
+            return 'bigScreen'
+        }
+    }
 }
 
 // Run
