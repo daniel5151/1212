@@ -9,7 +9,7 @@ var sizes = {
         chunk: 23,
         BChunk: 'generateMeBruh',
         SChunk: 'generateMeBruh',
-        spacing: 1
+        spacing: 2
     },
     grid: [12, 12],
     BScale: 1,
@@ -206,15 +206,18 @@ function updateDragbox(slot) {
 
         var pieceWidth = (sizes[getScreenType()].chunk * Pieces[pieceType].size[rotationMod]);
         var containerPieceWDiff = pieceWidth - $(".drag-container").width()
+        
+        var bottomOffset = (getScreenType()=='smallScreen') ? -sizes[getScreenType()].chunk*2 : 0;
+        
         if (containerPieceWDiff > 0) {
             centerCursor = {
                 left: ($(".drag-container").width() + containerPieceWDiff) / 2,
-                bottom: 0
+                bottom: bottomOffset
             }
         } else {
             centerCursor = {
                 left: $(".drag-container").width() / 2,
-                bottom: 0
+                bottom: bottomOffset
             }
         }
     }
