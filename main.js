@@ -1,17 +1,27 @@
 var sizes = {
     bigScreen: {
         chunk: 46,
-        SChunk: 34.5,
+        BChunk: 'generateMeBruh',
+        SChunk: 'generateMeBruh',
         spacing: 2
     },
     smallScreen: {
         chunk: 23,
-        SChunk: 17.25,
+        BChunk: 'generateMeBruh',
+        SChunk: 'generateMeBruh',
         spacing: 1
     },
     grid: [12, 12],
-    shrinkScale: 0.75
+    BScale: 1,
+    SScale: 0.75
 }
+function initDynamicSizes () {
+    sizes.bigScreen.SChunk = sizes.SScale*sizes.bigScreen.chunk
+    sizes.smallScreen.SChunk = sizes.SScale*sizes.smallScreen.chunk
+    sizes.bigScreen.BChunk = sizes.BScale*sizes.bigScreen.chunk
+    sizes.smallScreen.BChunk = sizes.BScale*sizes.smallScreen.chunk
+}
+
 var Pieces = {
     ln2: {
         size: [2, 1],
@@ -88,12 +98,6 @@ var currentPieces = {
     2: 'EMPTY',
     3: 'EMPTY'
 };
-// Template for each slot 
-// slot: {
-//    type: type,
-//    rotation: rotation
-// }
-
 var grid;
 
 function initGridHtml() {
@@ -109,23 +113,21 @@ function initGridHtml() {
     }
 }
 
-function initPieceHtml() {
+function genPieceHtml(type, slot, layout) {
     // Just for readability
     var htmlRow = "<div class='chunk-row'></div>";
     var htmlChunk = "<div class='chunk'></div>";
     var htmlPlaceholder = "<div class='chunk placeholder'></div>";
-    var container = "#invisible-template-container ";
-
-    for (var piece in Pieces) {
-        $(container).append(String.format("<div class='piece {0}'></div>", piece))
-        for (var row = 0; row < Pieces[piece].layout.length; row++) {
-            $(String.format("{0} .{1}", container, piece)).append(htmlRow)
-            for (var chunk = 0; chunk < Pieces[piece].layout[row].length; chunk++) {
-                if (Pieces[piece].layout[row][chunk] == 0) {
-                    $(String.format("{0} .{1} .chunk-row:last-child", container, piece)).append(htmlPlaceholder)
-                } else {
-                    $(String.format("{0} .{1} .chunk-row:last-child", container, piece)).append(htmlChunk)
-                }
+    var container = '#s' + slot + ' .drag-container'
+    
+    $(container).append(String.format("<div class='piece {0}'></div>", type))
+    for (var row = 0; row < layout.length; row++) {
+        $(String.format("{0} .{1}", container, type)).append(htmlRow)
+        for (var chunk = 0; chunk < layout[row].length; chunk++) {
+            if (layout[row][chunk] == 0) {
+                $(String.format("{0} .{1} .chunk-row:last-child", container, type)).append(htmlPlaceholder)
+            } else {
+                $(String.format("{0} .{1} .chunk-row:last-child", container, type)).append(htmlChunk)
             }
         }
     }
@@ -133,27 +135,22 @@ function initPieceHtml() {
 
 function spawnPiece(type, slot, rotation) {
     console.log(type, slot, rotation)
-    $('#invisible-template-container .' + type).clone().appendTo('#s' + slot + ' .drag-container')
+    
+    var layout = rotateArray(Pieces[type].layout, rotation/90);
     currentPieces[slot] = {
         type: type,
-        rotation: rotation
+        color: Pieces[type].color,
+        layout: layout
     }
-    var rotatedPieceCSS = String.format("\
-        #s{0} .{1} {\
-            transform: translateY(-50%) rotate({2}deg);\
-            -ms-transform: translateY(-50%) rotate({2}deg);\
-            -webkit-transform: translateY(-50%) rotate({2}deg);\
-            -moz-transform: translateY(-50%) rotate({2}deg);\
-            -o-transform: translateY(-50%) rotate({2}deg);\
-        }", slot, type, rotation);
-
-    $("<style>")
-        .prop("type", "text/css")
-        .prop("id", "s" + slot + "_rotation")
-        .html(rotatedPieceCSS)
-        .appendTo("head");
-
+    
+    genPieceHtml(type, slot, layout)
     updateDragbox(slot);
+}
+
+function checkValidDrop (drag_container) {
+    var slot = $(drag_container).parent().attr('id').match(/\d+/)[0];
+    
+    return false;
 }
 
 function removePiece(slot) {
@@ -162,34 +159,25 @@ function removePiece(slot) {
     currentPieces[slot] = 'EMPTY'
 }
 
-function changePieceSize(piece, growShrink) {
+function changePieceSize(slot, growShrink) {
     // Error handling
-    if (piece.attr("class") == undefined) {
+    if (slot == 'EMPTY') {
         return false
     }
-
-    var pieceType = piece.attr("class").split(' ')[1];
-    var newSize = (growShrink == 'shrink') ? sizes[getScreenType()].SChunk : sizes[getScreenType()].chunk;
+    
+    var pieceSelector = "#s"+slot+" .piece";
+    var newSize = (growShrink == 'shrink') ? sizes[getScreenType()].SChunk : sizes[getScreenType()].BChunk;
     var spacing = sizes[getScreenType()].spacing;
 
-    $(piece).css('width', newSize * Pieces[pieceType].size[0] + (Pieces[pieceType].size[0] - 1) * spacing)
-    $(piece).css("height", newSize * Pieces[pieceType].size[1] + (Pieces[pieceType].size[1] - 1) * spacing)
+    $(pieceSelector).css('width', newSize * currentPieces[slot].layout[0].length + (currentPieces[slot].layout[0].length - 1) * spacing)
+    $(pieceSelector).css("height", newSize * currentPieces[slot].layout.length + (currentPieces[slot].layout.length - 1) * spacing)
 
-    $(piece).find('.chunk').css('width', newSize);
-    $(piece).find('.chunk').css("height", newSize);
+    $(pieceSelector).find('.chunk').css('width', newSize);
+    $(pieceSelector).find('.chunk').css("height", newSize);
 }
 
 function initCSS() {
-    // First, check for existing CSS and delete it.
-    // How else are you going to update it?
-    if ($("#chunkS_CSS").length > 0) {
-        $("#chunkS_CSS").remove()
-        for (var piece in Pieces) {
-            $("#" + piece + "_CSS").remove()
-        }
-    }
-
-    // Piece CSS
+    // Piece Color CSS
     for (var piece in Pieces) {
         var color = Pieces[piece].color;
         var pieceCSS = String.format("\
@@ -214,9 +202,9 @@ function updateDragbox(slot) {
     var centerCursor = false;
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         var pieceType = $("#s" + slot + " .drag-container").find('.piece').attr("class").split(' ')[1];
-        var rotation = (currentPieces[slot] == 90 || currentPieces[slot] == 270) ? 1 : 0;
+        var rotationMod = (currentPieces[slot] == 90 || currentPieces[slot] == 270) ? 1 : 0;
 
-        var pieceWidth = (sizes[getScreenType()].chunk * Pieces[pieceType].size[rotation]);
+        var pieceWidth = (sizes[getScreenType()].chunk * Pieces[pieceType].size[rotationMod]);
         var containerPieceWDiff = pieceWidth - $(".drag-container").width()
         if (containerPieceWDiff > 0) {
             centerCursor = {
@@ -233,33 +221,14 @@ function updateDragbox(slot) {
     
     $("#s" + slot + " .drag-container").draggable( "option", "cursorAt", centerCursor );
     
-    changePieceSize($("#s" + slot + " .drag-container").find('.piece'), 'shrink')
-}
-
-function checkValidDrop (drag_container) {
-    var slot = $(drag_container).parent().attr('id').match(/\d+/)[0];
-    var pieceType = currentPieces[slot].type;
-    var timesRotated = currentPieces[slot].rotation/90
-    
-    var pieceLayout = Pieces[pieceType].layout;
-    for (var i=0; i < timesRotated; i++ ) {
-        rotateArray(pieceLayout)
-    }
-    
-    // ROTATE ARRAY ONLY WORKS ON 2D ARRAYS
-    // FIX THIS
-    
-    
-    console.log(pieceLayout)
-    
-    return false;
+    changePieceSize(slot, 'shrink')
 }
 
 function initDragboxes() {
     $(".drag-container").each(function () {
         $(this).draggable({
             start: function () {
-                changePieceSize($(this).find('.piece'), 'grow')
+                changePieceSize($(this).parent().attr('id').match(/\d+/)[0], 'grow')
             },
             revert: function () {
                 // check if it was a good drop, valid position and such.
@@ -271,7 +240,7 @@ function initDragboxes() {
                     return false;
                 } else {
                     // Shrink them back
-                    changePieceSize($(this).find('.piece'), 'shrink')
+                    changePieceSize($(this).parent().attr('id').match(/\d+/)[0], 'shrink')
 
                     // Return the piece to starting position
                     $(this).data("uiDraggable").originalPosition = {
@@ -310,8 +279,8 @@ function initGrid(size) {
 }
 
 function init() {
+    initDynamicSizes();
     initGridHtml()
-    initPieceHtml();
     initCSS();
     
     initDragboxes();
@@ -325,7 +294,7 @@ function init() {
         updateDragbox(2)
         updateDragbox(3)
         $(".drag-container").each(function () {
-            changePieceSize($(this).find('.piece'), 'shrink')
+            changePieceSize($(this).parent().attr('id').match(/\d+/)[0], 'shrink')
         })
     });
 }
@@ -376,20 +345,19 @@ function getScreenType() {
     }
 }
 
-function rotateArray (a) {
-    var n=a.length;
-    var tmp = 0;
-    for (var i=0; i<n/2; i++){
-        for (var j=i; j<n-i-1; j++){
-            tmp=a[i][j];
-            a[i][j]=a[j][n-i-1];
-            a[j][n-i-1]=a[n-i-1][n-j-1];
-            a[n-i-1][n-j-1]=a[n-j-1][i];
-            a[n-j-1][i]=tmp;
+function rotateArray(piece, rotations) {
+    // Recursive programming is my jammmmmmm
+	if (rotations == 0) {
+		return piece
+	}
+	var res = Array.apply(null, Array(piece[0].length)).map(function(){return Array(piece.length)});
+    for (var x = 0; x < piece.length; x++) {
+        for (var y = 0; y < piece[0].length; y++) {
+            res[(res.length-1)-y][x] = piece[x][y];
         }
     }
-    return a
-};
+    return rotateArray(res, rotations-1)
+}
 
 // Run
 window.onload = init;
