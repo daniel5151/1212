@@ -186,7 +186,9 @@ function spawnPiece(type, slot, rotation) {
     }
 
     $(container).find('.chunk').each(function () {
-        $(this).fadeOut(0).fadeIn('slow')
+        $(this).fadeOut(0).fadeIn('slow', function () {
+            if (typeof(callback) == 'function') callback()
+        })
     })
 
     // Fix cursor positioning and size issues
@@ -267,14 +269,22 @@ function Roll() {
 function checkValidDrop(drag_container) {
     var slot = $(drag_container).parent().attr('id').match(/\d+/)[0];
 
-    var topLeftPieceChunk = $(drag_container).find(".chunk").first().offset();
-    var topLeftGridChunk = $('.grid-container .grid-row:first .chunk:first').offset();
-    var dx = topLeftPieceChunk.left - topLeftGridChunk.left;
-    var dy = topLeftPieceChunk.top - topLeftGridChunk.top;
-
-    console.log(dx, dy)
-
+    var topLeftPieceChunk = $(drag_container).find(".chunk").first()
+    var topLeftGridChunk = $('.grid-container .grid-row:first .chunk:first')
+    
+    getOffset(topLeftPieceChunk, topLeftGridChunk)
+    
     return true;
+}
+
+function getOffset (elem1, elem2) {
+    var dx = elem1.offset().left - elem2.offset().left;
+    var dy = elem1.offset().top - elem2.offset().top;
+    var offset = {
+        top:dx,
+        left:dy
+    };
+    return offset
 }
 
 // USER INTERACTION
@@ -291,31 +301,37 @@ function dropPiece() {
     // Why? Good question. JavaScript, amirite?
 
     var slot = $(this).parent().attr('id').match(/\d+/)[0]
+    if (currentPieces[slot] == 'EMPTY') return true
+    
     if (checkValidDrop(this)) {
         // update the grid visually and object
         // WRITE DIS FUNCTION
+        
+        // Move the piece to it's final position
+        
+        // offset is supposed to bring the peiece to the right place
+        
+        var offset = {top: 0, left:0}
+        
+        $(this).animate(offset, 125, function () {
+            // delete the piece
+            removePiece(slot)
+            
+            // check if player has lost
+            // WRITE DIS FUNCTION
 
-        // delete the piece
-        removePiece(slot)
-
-        // check if player has lost
-        // WRITE DIS FUNCTION
-
-        // Check if a re-roll is needed
-        // Don't judge me. A loop is overkill IMHO
-        if (currentPieces[1] == 'EMPTY' && currentPieces[2] == 'EMPTY' && currentPieces[3] == 'EMPTY') {
-            Roll()
-        }
+            // Check if a re-roll is needed
+            // Don't judge me. A loop is overkill IMHO
+            if (currentPieces[1] == 'EMPTY' && currentPieces[2] == 'EMPTY' && currentPieces[3] == 'EMPTY') {
+                Roll()
+            }
+        })
     } else {
         // Shrink them back
         changePieceSize(slot, 'shrink')
     }
 
-    // Still revert the drag-container to it's original position
-    $(this).data("uiDraggable").originalPosition = {
-        top: 0,
-        left: 0
-    };
+    // Revert handles bringing the drag-container back to it's original position
     return true;
 }
 
