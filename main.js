@@ -510,7 +510,7 @@ function getRandomInt(min, max) {
 
 function getScreenType() {
     if ($(window).height() >= $(window).width()) {
-        if ($(window).width() < 600) {
+        if ($(window).width() <= 600) {
             return 'smallScreen'
         } else {
             return 'bigScreen'
