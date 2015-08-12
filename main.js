@@ -28,35 +28,35 @@ var Pieces = {
         layout: [
             [1, 1]
         ],
-        color: '#000'
+        color: '#009688'
     },
     ln3: {
         size: [3, 1],
         layout: [
             [1, 1, 1]
         ],
-        color: '#111'
+        color: '#35A79C'
     },
     ln4: {
         size: [4, 1],
         layout: [
             [1, 1, 1, 1]
         ],
-        color: '#222'
+        color: '#65C3BA'
     },
     ln5: {
         size: [5, 1],
         layout: [
             [1, 1, 1, 1, 1]
         ],
-        color: '#333'
+        color: 'rgb(45, 145, 219)'
     },
     sBlock: {
         size: [1, 1],
         layout: [
             [1]
         ],
-        color: '#444'
+        color: '#03396C'
     },
     mBlock: {
         size: [2, 2],
@@ -64,7 +64,7 @@ var Pieces = {
             [1, 1],
             [1, 1]
         ],
-        color: '#555'
+        color: '#EB8C00'
     },
     lBlock: {
         size: [3, 3],
@@ -73,7 +73,7 @@ var Pieces = {
             [1, 1, 1],
             [1, 1, 1]
         ],
-        color: '#666'
+        color: '#c71818'
     },
     smallL: {
         size: [2, 2],
@@ -81,7 +81,7 @@ var Pieces = {
             [1, 0],
             [1, 1]
         ],
-        color: '#777'
+        color: '#49b52f'
     },
     bigL: {
         size: [3, 3],
@@ -90,7 +90,7 @@ var Pieces = {
             [1, 0, 0],
             [1, 1, 1]
         ],
-        color: '#888'
+        color: '#0078FF'
     },
 };
 var currentPieces = {
@@ -305,8 +305,8 @@ function returnValidPieceInfo(drag_container) {
     var topLeftGridChunk = getChunkFromCords({x:0,y:0});
     var offset = getOffset(topLeftPieceChunk, topLeftGridChunk);
     var cords = {
-        x: Math.round(offset.top / (sizes.chunk()+sizes.spacing())),
-        y: Math.round(offset.left / (sizes.chunk()+sizes.spacing()))
+        x: Math.round(offset.left / (sizes.chunk()+sizes.spacing())),
+        y: Math.round(offset.top / (sizes.chunk()+sizes.spacing()))
     };
     
     // localGrid is a grid localized to the are a piece wished to occupy
@@ -383,10 +383,8 @@ function dropPiece() {
             $(this)
         )
         
-        position.top-=containerOffset.left
-        position.left-=containerOffset.top
-        // What the fuck. Why is this the solution?!!!
-        // FAAAAK
+        position.top-=containerOffset.top
+        position.left-=containerOffset.left
         
         $(this).animate(position, 125, function () {
             // revert to relative CSS
@@ -470,8 +468,8 @@ function getOffset (elem1, elem2) {
     var dx = elem1.offset().left - elem2.offset().left;
     var dy = elem1.offset().top - elem2.offset().top;
     var offset = {
-        top:dx,
-        left:dy
+        top:dy,
+        left:dx
     };
     return offset
 }
