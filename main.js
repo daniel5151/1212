@@ -216,8 +216,6 @@ function removePiece(slot) {
 }
 
 function changePieceSize(slot, growShrink) {
-    console.log("Piece in slot " +slot+" is going to "+growShrink)
-    
     // Error handling
     if (currentPieces[slot] == 'EMPTY') {
         return false
@@ -279,18 +277,7 @@ function Roll() {
     spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation())
 }
 
-function lastMinuteInjections () {
-    initGrid(sizes.grid, true)
-    
-    for (var y = 0; y < grid.length; y++) {
-        for (var x = 0; x < grid[y].length; x++) {
-            if (grid[y][x] == 1) getChunkFromCords({x:x,y:y}).css('background','black')
-        }
-    }
-    
-}
-
-function getLocalGrid(cords, size) {
+function getLocalizedGrid(cords, size) {
     var localGrid = [];
     for (var y = cords.y; y < cords.y+size[1]; y++) {
         var t = []
@@ -306,32 +293,36 @@ function getLocalGrid(cords, size) {
     return localGrid;
 }
 
-function returnValidPosition(drag_container) {
+function returnValidPieceInfo(drag_container) {
     var slot = $(drag_container).parent().attr('id').match(/\d+/)[0];
+    var layout = currentPieces[slot].layout
     
+    // We want to determine where in the grid the user wanted to place his piece
+    // We do this by a relatively simple process of converting the offsets
+    // between the top-left chunk in the piece and the top left chunk on the grid
+    // (the 0,0 chunk)
     var topLeftPieceChunk = $(drag_container).find(".chunk").first();
     var topLeftGridChunk = getChunkFromCords({x:0,y:0});
-    
     var offset = getOffset(topLeftPieceChunk, topLeftGridChunk);
     var cords = {
         x: Math.round(offset.top / (sizes.chunk()+sizes.spacing())),
         y: Math.round(offset.left / (sizes.chunk()+sizes.spacing()))
     };
     
-    console.log(cords);
+    // localGrid is a grid localized to the are a piece wished to occupy
+    var localGrid = getLocalizedGrid(cords, currentPieces[slot].size)
     
-    console.log(getLocalGrid(cords, currentPieces[slot].size))
-    
-    
-    
-//    Very VERY temporary posterity measures
-    if (cords.x > 11 || cords.x < 0 || cords.y > 11 || cords.y < 0 ) {
-        return false;
+    // This loop checks to see if the local grid can support the piece being placed
+    var valid = true;
+    for (var y = 0; y < localGrid.length; y++) {
+        for (var x = 0; x < localGrid[y].length; x++) {
+            if (localGrid[y][x] == 1 && layout[y][x] == 1) valid = false;
+        }
     }
     
-    var valid = true;
     if (valid) {
-        return getChunkFromCords(cords);
+        // return the chunk to which the piece should gravitate
+        return {cords:cords, piece:getChunkFromCords(cords)};
     } else {
         return false;
     }
@@ -359,9 +350,9 @@ function dropPiece() {
     var slot = $(this).parent().attr('id').match(/\d+/)[0]
     if (currentPieces[slot] == 'EMPTY') return true
     
-    var topLeftChunk = returnValidPosition(this)
+    var valid = returnValidPieceInfo(this)
     
-    if (topLeftChunk!==false) {
+    if (valid!==false) {
         // update the grid visually and object
         // WRITE DIS FUNCTION
         
@@ -383,7 +374,7 @@ function dropPiece() {
         // the piece inside aligns with the grid where it's being placed
         
         // our base position is the coordinates of the chunk on the grid
-        var position = topLeftChunk.offset()
+        var position = valid.piece.offset()
         
         // we need to offset these coordinates by factoring in the fact that
         // the chunk is contained within a piece...
@@ -397,7 +388,7 @@ function dropPiece() {
         // What the fuck. Why is this the solution?!!!
         // FAAAAK
         
-        $(this).animate(position, 500, function () {
+        $(this).animate(position, 125, function () {
             // revert to relative CSS
             $(this).css({
                 width:"100%",
@@ -405,13 +396,36 @@ function dropPiece() {
                 position:"relative"
             });
             
+            // Paint and update the grid where the piece is to be placed
+            for (var y = valid.cords.y; y < valid.cords.y+currentPieces[slot].size[1]; y++) {
+                for (var x = valid.cords.x; x < valid.cords.x+currentPieces[slot].size[0]; x++) {
+                    if (x >= sizes.grid[0] || x < 0 || y >= sizes.grid[1] || y < 0) {
+                        // do nothing
+                    } else {
+                        if (currentPieces[slot].layout[y-valid.cords.y][x-valid.cords.x] == 1) {
+                            getChunkFromCords({x:x,y:y}).css('background',currentPieces[slot].color)
+                        }
+                        grid[y][x] = currentPieces[slot].layout[y-valid.cords.y][x-valid.cords.x]
+                    }
+                }
+            }
+            
             // delete the piece
             removePiece(slot)
             
+            // check to update lines
+                // WRITE DIS FUNCTION ---------------------------------
+                // WRITE DIS FUNCTION ---------------------------------
+                // WRITE DIS FUNCTION ---------------------------------
+                // WRITE DIS FUNCTION ---------------------------------
+            
             // check if player has lost
-            // WRITE DIS FUNCTION
+                // WRITE DIS FUNCTION ---------------------------------
+                // WRITE DIS FUNCTION ---------------------------------
+                // WRITE DIS FUNCTION ---------------------------------
+                // WRITE DIS FUNCTION ---------------------------------
 
-            // Check if a re-roll is needed
+            // Check if a re-roll is needed...
             // Don't judge me. A loop is overkill IMHO
             if (currentPieces[1] == 'EMPTY' && currentPieces[2] == 'EMPTY' && currentPieces[3] == 'EMPTY') {
                 Roll()
@@ -446,8 +460,6 @@ function init() {
                 changePieceSize($(this).parent().attr('id').match(/\d+/)[0], 'shrink')
             })
         });
-        
-        lastMinuteInjections()
     }
     // Run
 window.onload = init;
