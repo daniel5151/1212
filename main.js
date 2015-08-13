@@ -316,7 +316,7 @@ function returnPieceIfValidDrop(drag_container) {
                 if (localGrid[y][x] !== 0 && layout[y][x] == 1) valid = false;
             } else {
                 if (localGrid[y][x] == 2 && layout[y][x] == 1) valid = false;
-                if (localGrid[y][x] == 0 && layout[y][x] == 1) antiChunkOnEmptySpace+=1
+                if (localGrid[y][x] == 0 && layout[y][x] == 1) antiChunkOnEmptySpace += 1
             }
         }
     }
@@ -478,15 +478,18 @@ var updateHtml = {
 function checkGameOver() {
     var validMoves = 0;
     for (var slot = 1; slot <= 3; slot++) {
-        if (currentPieces[slot]=='EMPTY') {
+        if (currentPieces[slot] == 'EMPTY') {
             continue
         }
         for (var gy = 0; gy < grid.length; gy++) {
             for (var gx = 0; gx < grid[gy].length; gx++) {
                 // localGrid is a grid localized to the are a piece wished to occupy
-                var localGrid = getLocalizedGrid({x:gx,y:gy}, currentPieces[slot].size)
+                var localGrid = getLocalizedGrid({
+                    x: gx,
+                    y: gy
+                }, currentPieces[slot].size)
                 var layout = currentPieces[slot].layout;
-                
+
                 // This loop checks to see if the local grid can support the piece being placed
                 var valid = true;
                 var antiChunkOnEmptySpace = 0;
@@ -534,12 +537,10 @@ function Roll() {
     removePiece(1)
     removePiece(2)
     removePiece(3)
-    
-    var odds = randomBoolean(0.05);
-    
-    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation(), odds)
-    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation(), odds)
-    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), odds)
+
+    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation(), randomBoolean(0.05))
+    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation(), randomBoolean(0.05))
+    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), randomBoolean(0.05))
 }
 
 function pickUpPiece() {
@@ -664,7 +665,7 @@ function dropPiece() {
             if (currentPieces[1] == 'EMPTY' && currentPieces[2] == 'EMPTY' && currentPieces[3] == 'EMPTY') {
                 Roll()
             }
-            
+
             // check if player has lost
             var gameOver = checkGameOver();
             if (gameOver) {
