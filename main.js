@@ -10,7 +10,7 @@ var sizes = {
         chunk: 23,
         BChunk: 'generateMeBruh',
         SChunk: 'generateMeBruh',
-        spacing: 2
+        spacing: 1
     },
     grid: [12, 12],
     BScale: 1,
@@ -253,17 +253,17 @@ function changePieceSize(slot, growShrink) {
         return false
     }
 
-    var pieceSelector = "#s" + slot + " .piece";
+    var piece = "#s" + slot + " .piece";
     var newSize = (growShrink == 'shrink') ? sizes[getScreenType()].SChunk : sizes[getScreenType()].BChunk;
     var spacing = sizes.spacing();
 
-    $(pieceSelector)
-        .css('width', newSize * currentPieces[slot].size[0] + (currentPieces[slot].size[0]) * spacing)
-        .css("height", newSize * currentPieces[slot].size[1] + (currentPieces[slot].size[1]) * spacing)
-
-    $(pieceSelector).find('.chunk')
+    $(piece).find('.chunk')
         .css('width', newSize)
         .css("height", newSize);
+    
+    $(piece)
+        .css('width', newSize * currentPieces[slot].size[0] + (currentPieces[slot].size[0] - 1) * spacing)
+        .css("height", newSize * currentPieces[slot].size[1] + (currentPieces[slot].size[1] - 1) * spacing)
 }
 
 function updateDragbox(slot) {
@@ -477,7 +477,7 @@ var updateHtml = {
                 getChunkFromCords({
                     x: col,
                     y: row
-                }).css('background', 'rgba(238, 228, 218, 0.35)')
+                }).animate({backgroundColor: 'rgba(238, 228, 218, 0.35)'},250)
             }
         }
         for (var c in cleared.col) {
@@ -487,7 +487,7 @@ var updateHtml = {
                 getChunkFromCords({
                     x: col,
                     y: row,
-                }).css('background', 'rgba(238, 228, 218, 0.35)')
+                }).animate({backgroundColor: 'rgba(238, 228, 218, 0.35)'},250)
             }
         }
     }
