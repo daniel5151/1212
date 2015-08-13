@@ -1,0 +1,29 @@
+CACHE MANIFEST
+
+#version 1.0 8-13-2015
+
+CACHE:
+
+#images
+
+
+#internal HTML documents
+
+
+#style sheets
+file://localhost/Users/larisaprilik/Desktop/DanikTemp/daniel5151.github.io.git/1212/styles.css
+
+#style sheet images
+
+
+#javascript files
+file://localhost/Users/larisaprilik/Desktop/DanikTemp/daniel5151.github.io.git/1212/js/jquery-1.11.3.min.js
+file://localhost/Users/larisaprilik/Desktop/DanikTemp/daniel5151.github.io.git/1212/js/jquery-ui-1.11.4/external/jquery/jquery.js
+file://localhost/Users/larisaprilik/Desktop/DanikTemp/daniel5151.github.io.git/1212/js/jquery-ui-1.11.4/jquery-ui.min.js
+file://localhost/Users/larisaprilik/Desktop/DanikTemp/daniel5151.github.io.git/1212/js/jquery.ui.touch-punch.min.js
+file://localhost/Users/larisaprilik/Desktop/DanikTemp/daniel5151.github.io.git/1212/js/jquery.animateNumber.min.js
+file://localhost/Users/larisaprilik/Desktop/DanikTemp/daniel5151.github.io.git/1212/js/jquery.color.plus-names-2.1.2.min.js
+file://localhost/Users/larisaprilik/Desktop/DanikTemp/daniel5151.github.io.git/1212/main.js
+
+NETWORK:
+*
