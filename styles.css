@@ -91,7 +91,7 @@ body {
     opacity: 0;
 }
 
-.game-over {
+.overlay {
     width: 600px;
     height: 600px;
     position: absolute;
@@ -113,7 +113,21 @@ body {
     margin-top: 222px;
 }
 
-#again {
+.high-score p {
+    color: rgb(119, 110, 101);
+    font-size: 60px;
+    font-weight: bold;
+    height: 60px;
+    line-height: 60px;
+    margin-top: 160px;
+}
+
+.high-score span {
+    color: rgb(119, 110, 101);
+    font-size: 30px;
+}
+
+.button {
     display: inline-block;
     background: rgb(119, 110, 101);
     font-size: 20px;
@@ -336,7 +350,7 @@ body {
         margin-bottom: 50px;
     }
     
-    .game-over {
+    .overlay {
         width: 300px;
         height: 300px;
         position: absolute;
@@ -357,6 +371,20 @@ body {
         height: 30px;
         line-height: 30px;
         margin-top: 111px;
+    }
+    
+    .high-score p {
+        color: rgb(119, 110, 101);
+        font-size: 30px;
+        font-weight: bold;
+        height: 30px;
+        line-height: 30px;
+        margin-top: 80px;
+    }
+
+    .high-score span {
+        color: rgb(119, 110, 101);
+        font-size: 15px;
     }
     
     .box {
@@ -420,27 +448,6 @@ body {
         float: left;
         width: 220px;
         margin-bottom: 100px;
-    }
-    
-    .game-over {
-        width: 600px;
-        height: 600px;
-        position: absolute;
-        background-color: rgba(205, 193, 180, 0.6);
-        border-radius: 3%;
-        text-align: center;
-
-        transition: opacity 1s;
-        -webkit-transition: opacity 1s;
-    }
-
-    .game-over p {
-        color: rgb(119, 110, 101);
-        font-size: 60px;
-        font-weight: bold;
-        height: 60px;
-        line-height: 60px;
-        margin-top: 222px;
     }
     
     .box {
@@ -530,7 +537,7 @@ body {
         margin-bottom: 50px;
     }
     
-    .game-over {
+    .overlay {
         width: 300px;
         height: 300px;
         position: absolute;
@@ -550,6 +557,20 @@ body {
         height: 30px;
         line-height: 30px;
         margin-top: 111px;
+    }
+    
+    .high-score p {
+        color: rgb(119, 110, 101);
+        font-size: 30px;
+        font-weight: bold;
+        height: 30px;
+        line-height: 30px;
+        margin-top: 80px;
+    }
+
+    .high-score span {
+        color: rgb(119, 110, 101);
+        font-size: 15px;
     }
     
     .box {

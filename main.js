@@ -123,6 +123,7 @@ var Pieces = {
 var isGameOver = false;
 var score = 0;
 var topScore = 0;
+var topScoreNotificationFired = false;
 var currentPieces = {
     1: 'EMPTY',
     2: 'EMPTY',
@@ -430,6 +431,10 @@ var updateHtml = {
             .animateNumber({
                 number: topScore + dScore
             }, 200);
+        if (!topScoreNotificationFired && dScore!==0) {
+            $(".high-score").removeClass("hidden")
+            topScoreNotificationFired = true;
+        }
     },
     pieces: function () {
         for (var slot = 1; slot <= 3; slot++) {
@@ -538,6 +543,9 @@ function restart() {
     // reset score
     score = 0
     updateHtml.score(-score)
+    
+    // reset the high score notification
+    topScoreNotificationFired = false;
 
     // reinitialize blank grid
     initGrid(sizes.grid)
@@ -719,6 +727,9 @@ function init() {
     }
 
     $("#again").click(restart);
+    $("#keep-playing").click(function () {
+        $(".high-score").addClass("hidden")
+    });
 
     $(window).resize(function () {
         updateDragbox(1)
@@ -793,6 +804,7 @@ function save() {
     localStorage.setItem('score', JSON.stringify(score));
     localStorage.setItem('topScore', JSON.stringify(topScore));
     localStorage.setItem('isGameOver', JSON.stringify(isGameOver));
+    localStorage.setItem('topScoreNotificationFired', JSON.stringify(topScoreNotificationFired));
 }
 
 function load() {
@@ -812,6 +824,8 @@ function load() {
 
     isGameOver = JSON.parse(localStorage.getItem('isGameOver'))
     if (isGameOver) $(".game-over").removeClass("hidden")
+    
+    topScoreNotificationFired = JSON.parse(localStorage.getItem("topScoreNotificationFired"))
 }
 
 // General Utilities
