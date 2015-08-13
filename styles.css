@@ -39,8 +39,8 @@ body {
     text-align: right;
 }
 
-.score-container,
-.best-container {
+.score,
+.top {
     position: relative;
     display: inline-block;
     background: #bbada0;
@@ -55,8 +55,8 @@ body {
     text-align: center;
 }
 
-.score-container:after,
-.best-container:after {
+.score:after,
+.top:after {
     position: absolute;
     width: 100%;
     top: 10px;
@@ -68,11 +68,11 @@ body {
     color: #eee4da;
 }
 
-.score-container:after {
+.score:after {
     content: "Score";
 }
 
-.best-container:after {
+.top:after {
     content: "Top";
 }
 
@@ -151,7 +151,6 @@ body {
     from {opacity: 0;}
     to {opacity: 1;}
 }
-
 .chunk {
     width: 46px;
     height: 46px;
@@ -232,8 +231,8 @@ body {
         color: rgb(119, 110, 101);
     }
 
-    .score-container,
-    .best-container {
+    .score,
+    .top {
         position: relative;
         display: inline-block;
         background: #bbada0;
@@ -248,8 +247,8 @@ body {
         text-align: center;
     }
 
-    .score-container:after,
-    .best-container:after {
+    .score:after,
+    .top:after {
         position: absolute;
         width: 100%;
         top: 5px;
@@ -364,8 +363,8 @@ body {
         color: rgb(119, 110, 101);
     }
 
-    .score-container,
-    .best-container {
+    .score,
+    .top {
         position: relative;
         display: inline-block;
         background: #bbada0;
@@ -380,8 +379,8 @@ body {
         text-align: center;
     }
 
-    .score-container:after,
-    .best-container:after {
+    .score:after,
+    .top:after {
         position: absolute;
         width: 100%;
         top: 5px;

@@ -15,10 +15,10 @@ var sizes = {
     grid: [12, 12],
     BScale: 1,
     SScale: 0.75,
-    chunk:function () {
+    chunk: function () {
         return sizes[getScreenType()].chunk
     },
-    spacing:function () {
+    spacing: function () {
         return sizes[getScreenType()].spacing
     }
 }
@@ -28,6 +28,7 @@ var Pieces = {
         layout: [
             [1, 1]
         ],
+        points: 2,
         color: '#009688'
     },
     ln3: {
@@ -35,6 +36,7 @@ var Pieces = {
         layout: [
             [1, 1, 1]
         ],
+        points: 3,
         color: '#35A79C'
     },
     ln4: {
@@ -42,6 +44,7 @@ var Pieces = {
         layout: [
             [1, 1, 1, 1]
         ],
+        points: 4,
         color: '#65C3BA'
     },
     ln5: {
@@ -49,6 +52,7 @@ var Pieces = {
         layout: [
             [1, 1, 1, 1, 1]
         ],
+        points: 5,
         color: 'rgb(45, 145, 219)'
     },
     sBlock: {
@@ -56,6 +60,7 @@ var Pieces = {
         layout: [
             [1]
         ],
+        points: 1,
         color: '#03396C'
     },
     mBlock: {
@@ -64,6 +69,7 @@ var Pieces = {
             [1, 1],
             [1, 1]
         ],
+        points: 4,
         color: '#EB8C00'
     },
     lBlock: {
@@ -73,6 +79,7 @@ var Pieces = {
             [1, 1, 1],
             [1, 1, 1]
         ],
+        points: 9,
         color: '#c71818'
     },
     smallL: {
@@ -81,6 +88,7 @@ var Pieces = {
             [1, 0],
             [1, 1]
         ],
+        points: 3,
         color: '#49b52f'
     },
     bigL: {
@@ -90,15 +98,18 @@ var Pieces = {
             [1, 0, 0],
             [1, 1, 1]
         ],
+        points: 5,
         color: '#0078FF'
     },
 };
+var score = 0;
+var topScore = 0;
 var currentPieces = {
     1: 'EMPTY',
     2: 'EMPTY',
     3: 'EMPTY'
 };
-var grid=[];
+var grid = [];
 
 // INIT FUNCTIONS
 function initDynamicSizes() {
@@ -106,6 +117,22 @@ function initDynamicSizes() {
     sizes.smallScreen.SChunk = sizes.SScale * sizes.smallScreen.chunk
     sizes.bigScreen.BChunk = sizes.BScale * sizes.bigScreen.chunk
     sizes.smallScreen.BChunk = sizes.BScale * sizes.smallScreen.chunk
+}
+
+function initGrid(size, random) {
+    // Empty array of 0's
+    for (var xs = 0; xs < size[0]; xs++) {
+        grid[xs] = Array.apply(null, new Array(size[1])).map(Number.prototype.valueOf, 0);
+    }
+
+    // Randomize it maybe?
+    if (random) {
+        for (var y = 0; y < grid.length; y++) {
+            for (var x = 0; x < grid[y].length; x++) {
+                grid[y][x] = getRandomInt(0, 1)
+            }
+        }
+    }
 }
 
 function initGridHtml() {
@@ -140,22 +167,6 @@ function initCSS() {
     };
 }
 
-function initGrid(size, random) {
-    // Empty array of 0's
-    for (var xs = 0; xs < size[0]; xs++) {
-        grid[xs] = Array.apply(null, new Array(size[1])).map(Number.prototype.valueOf, 0);
-    }
-    
-    // Randomize it maybe?
-    if (random) {
-        for (var y = 0; y < grid.length; y++) {
-            for (var x = 0; x < grid[y].length; x++) {
-                grid[y][x] = getRandomInt(0, 1)
-            }
-        }
-    }
-}
-
 function initDragboxes() {
     $(".drag-container").each(function () {
         $(this).draggable({
@@ -174,12 +185,13 @@ function spawnPiece(type, slot, rotation, anti) {
     var layout = rotateArray(Pieces[type].layout, rotation / 90);
     currentPieces[slot] = {
         type: type,
+        points: Pieces[type].points,
         color: Pieces[type].color,
         layout: layout,
         size: [layout[0].length, layout.length],
         anti: anti
     }
-    
+
     // Generate Piece HTML on the fly
     var htmlRow = "<div class='chunk-row'></div>";
     var htmlChunk = "<div class='chunk'></div>";
@@ -197,7 +209,7 @@ function spawnPiece(type, slot, rotation, anti) {
             }
         }
     }
-    
+
     if (anti) {
         $(container).find('.chunk').each(function () {
             if (!$(this).hasClass("placeholder")) $(this).addClass("anti-chunk")
@@ -243,9 +255,7 @@ function updateDragbox(slot) {
     // Guess again.
     var centerCursor = false;
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        var pieceType = $("#s" + slot + " .drag-container").find('.piece').attr("class").split(' ')[1];
-
-        var pieceWidth = (sizes.chunk() * Pieces[pieceType].size[0]);
+        var pieceWidth = (sizes.chunk() * currentPieces[slot].layout[0].length);
         var containerPieceWDiff = pieceWidth - $(".drag-container").width()
 
         var bottomOffset = (getScreenType() == 'smallScreen') ? -sizes.chunk() * 2 : 0;
@@ -261,6 +271,11 @@ function updateDragbox(slot) {
                 bottom: bottomOffset
             }
         }
+    } else {
+        centerCursor = {
+            left: $(".drag-container").width() / 2,
+            bottom: $(".drag-container").height() / 2
+        }
     }
 
     $("#s" + slot + " .drag-container").draggable("option", "cursorAt", centerCursor);
@@ -269,57 +284,66 @@ function updateDragbox(slot) {
 }
 
 // GAME MECHANICS
-function Roll() {
-    removePiece(1)
-    removePiece(2)
-    removePiece(3)
-    
-    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation(), randomBoolean(0.1))
-    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation(), randomBoolean(0.1))
-    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), randomBoolean(0.1))
-}
-
 function returnPieceIfValidDrop(drag_container) {
     var slot = $(drag_container).parent().attr('id').match(/\d+/)[0];
     var layout = currentPieces[slot].layout
-    
+
     // We want to determine where in the grid the user wanted to place his piece
     // We do this by a relatively simple process of converting the offsets
     // between the top-left chunk in the piece and the top left chunk on the grid
     // (the 0,0 chunk)
     var topLeftPieceChunk = $(drag_container).find(".chunk").first();
-    var topLeftGridChunk = getChunkFromCords({x:0,y:0});
+    var topLeftGridChunk = getChunkFromCords({
+        x: 0,
+        y: 0
+    });
     var offset = getOffset(topLeftPieceChunk, topLeftGridChunk);
     var cords = {
-        x: Math.round(offset.left / (sizes.chunk()+sizes.spacing())),
-        y: Math.round(offset.top / (sizes.chunk()+sizes.spacing()))
+        x: Math.round(offset.left / (sizes.chunk() + sizes.spacing())),
+        y: Math.round(offset.top / (sizes.chunk() + sizes.spacing()))
     };
-    
+
     // localGrid is a grid localized to the are a piece wished to occupy
     var localGrid = getLocalizedGrid(cords, currentPieces[slot].size)
-    
+
     // This loop checks to see if the local grid can support the piece being placed
     var valid = true;
     for (var y = 0; y < localGrid.length; y++) {
         for (var x = 0; x < localGrid[y].length; x++) {
-            if (! currentPieces[slot].anti) {
+            if (!currentPieces[slot].anti) {
                 if (localGrid[y][x] !== 0 && layout[y][x] == 1) valid = false;
             } else {
                 if (localGrid[y][x] == 2 && layout[y][x] == 1) valid = false;
             }
         }
     }
-    
+
     if (valid) {
         // return the chunk to which the piece should gravitate
-        return {cords:cords, html:getChunkFromCords(cords)};
+        return {
+            cords: cords,
+            html: getChunkFromCords(cords)
+        };
     } else {
         return false;
     }
 }
 
+// HTML Update function -- MIGRATE EXISTING FUNCTIONS HERE
+var updateHtml = {
+    score: function (dScore) {
+        $(".score")
+            .prop('number', score)
+            .animateNumber({
+                number: score + dScore
+            }, 200);
+    }
+}
+
+
 // TEMPORARY
 var moves = 0
+
 function checkGameOver() {
     if (moves < 7) {
         moves++
@@ -330,18 +354,34 @@ function checkGameOver() {
     }
 }
 
-function again () {
+function again() {
     // Hide the gameover overlay
     $(".game-over").addClass("hidden")
+
     // reset score
-        //writeme
+    score = 0
+    updateHtml.score(-score)
+
+    // reinitialize blank grid
     initGrid(sizes.grid)
+
+    // color existing grid blank
     colorGrid()
+
+    // Roll new pieces
     Roll()
-    
 }
 
-// USER INTERACTION
+function Roll() {
+    removePiece(1)
+    removePiece(2)
+    removePiece(3)
+
+    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation(), randomBoolean(0.1))
+    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation(), randomBoolean(0.1))
+    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), randomBoolean(0.1))
+}
+
 function pickUpPiece() {
     // 'this' is actually $(".drag-container")
     // Why? Good question. JavaScript, amirite?
@@ -356,15 +396,15 @@ function dropPiece() {
 
     var slot = $(this).parent().attr('id').match(/\d+/)[0]
     if (currentPieces[slot] == 'EMPTY') return true
-    
+
     var piece = returnPieceIfValidDrop(this)
-    
-    if (piece!==false) {
+
+    if (piece !== false) {
         // update the grid visually and object
         // WRITE DIS FUNCTION
-        
+
         // Move the piece to it's final position
-        
+
         // first, we convert relatively positioned container to absolutely 
         // positioned container to make it infinitely easier to position 
         // relative to the grid
@@ -376,55 +416,65 @@ function dropPiece() {
             left: $(this).offset().left
         }
         $(this).css(newCss);
-        
+
         // We want the draggable container to go to a absolute position so that
         // the piece inside aligns with the grid where it's being placed
-        
+
         // our base position is the coordinates of the chunk on the grid
         var position = piece.html.offset()
-        
+
         // we need to offset these coordinates by factoring in the fact that
         // the chunk is contained within a piece...
         var containerOffset = getOffset(
             $(this).find(".chunk").first(),
             $(this)
         )
-        
-        position.top-=containerOffset.top
-        position.left-=containerOffset.left
-        
+
+        position.top -= containerOffset.top
+        position.left -= containerOffset.left
+
         $(this).animate(position, 125, function () {
             // revert to relative CSS
             $(this).css({
-                width:"100%",
-                height:"100%",
-                position:"relative"
+                width: "100%",
+                height: "100%",
+                position: "relative"
             });
-            
+
             // Paint and update the grid where the piece is to be placed
-            for (var y = piece.cords.y; y < piece.cords.y+currentPieces[slot].size[1]; y++) {
-                for (var x = piece.cords.x; x < piece.cords.x+currentPieces[slot].size[0]; x++) {
-                    if (currentPieces[slot].layout[y-piece.cords.y][x-piece.cords.x] == 1) {
-                        if (! currentPieces[slot].anti) {
-                            getChunkFromCords({x:x,y:y}).css('background',currentPieces[slot].color)
+            for (var y = piece.cords.y; y < piece.cords.y + currentPieces[slot].size[1]; y++) {
+                for (var x = piece.cords.x; x < piece.cords.x + currentPieces[slot].size[0]; x++) {
+                    if (currentPieces[slot].layout[y - piece.cords.y][x - piece.cords.x] == 1) {
+                        if (!currentPieces[slot].anti) {
+                            getChunkFromCords({
+                                x: x,
+                                y: y
+                            }).css('background', currentPieces[slot].color)
                             grid[y][x] = 1
                         } else {
-                            getChunkFromCords({x:x,y:y}).css('background',"rgba(238, 228, 218, 0.35)")
+                            getChunkFromCords({
+                                x: x,
+                                y: y
+                            }).css('background', "rgba(238, 228, 218, 0.35)")
                             grid[y][x] = 0
                         }
                     }
                 }
             }
-            
+
+            // update score for piece placement
+            updateHtml.score(currentPieces[slot].points)
+            score += currentPieces[slot].points
+
+            // check to update line graphics and score
+            // WRITE DIS FUNCTION ---------------------------------
+            // WRITE DIS FUNCTION ---------------------------------
+            // WRITE DIS FUNCTION ---------------------------------
+            // WRITE DIS FUNCTION ---------------------------------
+
             // delete the piece
             removePiece(slot)
-            
-            // check to update lines
-                // WRITE DIS FUNCTION ---------------------------------
-                // WRITE DIS FUNCTION ---------------------------------
-                // WRITE DIS FUNCTION ---------------------------------
-                // WRITE DIS FUNCTION ---------------------------------
-            
+
             // check if player has lost
             var gameOver = checkGameOver();
             if (gameOver) {
@@ -457,9 +507,9 @@ function init() {
         initGrid(sizes.grid);
 
         Roll();
-        
-        $( "#again" ).click(again);
-        
+
+        $("#again").click(again);
+
         $(window).resize(function () {
             updateDragbox(1)
             updateDragbox(2)
@@ -473,48 +523,55 @@ function init() {
 window.onload = init;
 
 // Specialized Utilities
-function getOffset (elem1, elem2) {
+function getOffset(elem1, elem2) {
     // absolute offset between two elements
     var dx = elem1.offset().left - elem2.offset().left;
     var dy = elem1.offset().top - elem2.offset().top;
     var offset = {
-        top:dy,
-        left:dx
+        top: dy,
+        left: dx
     };
     return offset
 }
 
-function colorGrid () {
+function colorGrid() {
     // for debugging
     for (var y = 0; y < grid.length; y++) {
         for (var x = 0; x < grid[y].length; x++) {
-            if (grid[y][x] == 1) getChunkFromCords({x:x,y:y}).css('background','black')
-            if (grid[y][x] == 0) getChunkFromCords({x:x,y:y}).css('background','rgba(238, 228, 218, 0.35)')
+            if (grid[y][x] == 1) getChunkFromCords({
+                x: x,
+                y: y
+            }).css('background', 'black')
+            if (grid[y][x] == 0) getChunkFromCords({
+                x: x,
+                y: y
+            }).css('background', 'rgba(238, 228, 218, 0.35)')
         }
     }
 }
+
 function getChunkFromCords(cords) {
-    var x = cords.x+1
-    var y = cords.y+1
-    return $(String.format('.grid-container .grid-row:nth-of-type({1}) .chunk:nth-of-type({0})',cords.x+1,cords.y+1));
+    var x = cords.x + 1
+    var y = cords.y + 1
+    return $(String.format('.grid-container .grid-row:nth-of-type({1}) .chunk:nth-of-type({0})', cords.x + 1, cords.y + 1));
 }
 
 function getLocalizedGrid(cords, size) {
-    var localGrid = [];
-    for (var y = cords.y; y < cords.y+size[1]; y++) {
-        var t = []
-        for (var x = cords.x; x < cords.x+size[0]; x++) {
-            if (x >= sizes.grid[0] || x < 0 || y >= sizes.grid[1] || y < 0) {
-                t.push(2)
-            } else {
-                t.push(grid[y][x])
+        var localGrid = [];
+        for (var y = cords.y; y < cords.y + size[1]; y++) {
+            var t = []
+            for (var x = cords.x; x < cords.x + size[0]; x++) {
+                if (x >= sizes.grid[0] || x < 0 || y >= sizes.grid[1] || y < 0) {
+                    t.push(2)
+                } else {
+                    t.push(grid[y][x])
+                }
             }
+            localGrid.push(t)
         }
-        localGrid.push(t)
+        return localGrid;
     }
-    return localGrid;
-}
-// General Utilities
+    // General Utilities
 function pickRandomProperty(obj) {
     var result;
     var count = 0;
@@ -543,10 +600,12 @@ String.format = function () {
 function getRandomRotation() {
     return (Math.floor(Math.random() * 4)) * 90;
 }
-function randomBoolean (percent_odds) {
+
+function randomBoolean(percent_odds) {
     var boolean = (Math.random() < percent_odds) ? true : false
     return boolean
 }
+
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
