@@ -14,7 +14,7 @@ var sizes = {
     },
     grid: [12, 12],
     BScale: 1,
-    SScale: 0.75,
+    SScale: 0.6,
     chunk: function () {
         return sizes[getScreenType()].chunk
     },
@@ -54,6 +54,14 @@ var Pieces = {
         ],
         points: 5,
         color: 'rgb(45, 145, 219)'
+    },
+    ln6: {
+        size: [6, 1],
+        layout: [
+            [1, 1, 1, 1, 1,1]
+        ],
+        points: 6,
+        color: 'rgb(45, 52, 219)'
     },
     sBlock: {
         size: [1, 1],
@@ -100,6 +108,16 @@ var Pieces = {
         ],
         points: 5,
         color: '#0078FF'
+    },
+    plus: {
+        size: [3, 3],
+        layout: [
+            [0, 1, 0],
+            [1, 1, 1],
+            [0, 1, 0]
+        ],
+        points: 5,
+        color: '#9300ff'
     },
 };
 var isGameOver = false;
