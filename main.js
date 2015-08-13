@@ -345,7 +345,7 @@ var updateHtml = {
 var moves = 0
 
 function checkGameOver() {
-    if (moves < 7) {
+    if (moves < 2) {
         moves++
         return false
     } else {
@@ -354,7 +354,7 @@ function checkGameOver() {
     }
 }
 
-function again() {
+function restart() {
     // Hide the gameover overlay
     $(".game-over").addClass("hidden")
 
@@ -508,7 +508,7 @@ function init() {
 
         Roll();
 
-        $("#again").click(again);
+        $("#again").click(restart);
 
         $(window).resize(function () {
             updateDragbox(1)
