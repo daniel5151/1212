@@ -170,15 +170,16 @@ function initDragboxes() {
 }
 
 // PIECE MANIPULATION FUNCTIONS
-function spawnPiece(type, slot, rotation) {
+function spawnPiece(type, slot, rotation, anti) {
     var layout = rotateArray(Pieces[type].layout, rotation / 90);
     currentPieces[slot] = {
         type: type,
         color: Pieces[type].color,
         layout: layout,
-        size: [layout[0].length, layout.length]
+        size: [layout[0].length, layout.length],
+        anti: anti
     }
-
+    
     // Generate Piece HTML on the fly
     var htmlRow = "<div class='chunk-row'></div>";
     var htmlChunk = "<div class='chunk'></div>";
@@ -196,11 +197,15 @@ function spawnPiece(type, slot, rotation) {
             }
         }
     }
-
-    $(container).find('.chunk').each(function () {
-        $(this).fadeOut(0).fadeIn('slow', function () {
-            if (typeof(callback) == 'function') callback()
+    
+    if (anti) {
+        $(container).find('.chunk').each(function () {
+            if (!$(this).hasClass("placeholder")) $(this).addClass("anti-chunk")
         })
+    }
+    
+    $(container).find('.chunk').each(function () {
+        $(this).fadeOut(0).fadeIn('slow')
     })
 
     // Fix cursor positioning and size issues
@@ -272,9 +277,15 @@ function Roll() {
     removePiece(1)
     removePiece(2)
     removePiece(3)
-    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation())
-    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation())
-    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation())
+    
+    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation(), randomBoolean(0.1))
+    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation(), randomBoolean(0.1))
+    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), randomBoolean(0.1))
+}
+
+function randomBoolean (percent_odds) {
+    var boolean = (Math.random() < percent_odds) ? true : false
+    return boolean
 }
 
 function getLocalizedGrid(cords, size) {
@@ -283,7 +294,7 @@ function getLocalizedGrid(cords, size) {
         var t = []
         for (var x = cords.x; x < cords.x+size[0]; x++) {
             if (x >= sizes.grid[0] || x < 0 || y >= sizes.grid[1] || y < 0) {
-                t.push(1)
+                t.push(2)
             } else {
                 t.push(grid[y][x])
             }
@@ -316,7 +327,11 @@ function returnValidPieceInfo(drag_container) {
     var valid = true;
     for (var y = 0; y < localGrid.length; y++) {
         for (var x = 0; x < localGrid[y].length; x++) {
-            if (localGrid[y][x] == 1 && layout[y][x] == 1) valid = false;
+            if (! currentPieces[slot].anti) {
+                if (localGrid[y][x] !== 0 && layout[y][x] == 1) valid = false;
+            } else {
+                if (localGrid[y][x] == 2 && layout[y][x] == 1) valid = false;
+            }
         }
     }
     
@@ -328,10 +343,27 @@ function returnValidPieceInfo(drag_container) {
     }
 }
 
-function getChunkFromCords(cords) {
-    var x = cords.x+1
-    var y = cords.y+1
-    return $(String.format('.grid-container .grid-row:nth-of-type({1}) .chunk:nth-of-type({0})',cords.x+1,cords.y+1));
+// TEMPORARY
+var moves = 0
+function checkGameOver() {
+    if (moves < 7) {
+        moves++
+        return false
+    } else {
+        moves = 0
+        return true;
+    }
+}
+
+function again () {
+    // Hide the gameover overlay
+    $(".game-over").addClass("hidden")
+    // reset score
+        //writeme
+    initGrid(sizes.grid)
+    colorGrid()
+    Roll()
+    
 }
 
 // USER INTERACTION
@@ -397,13 +429,14 @@ function dropPiece() {
             // Paint and update the grid where the piece is to be placed
             for (var y = valid.cords.y; y < valid.cords.y+currentPieces[slot].size[1]; y++) {
                 for (var x = valid.cords.x; x < valid.cords.x+currentPieces[slot].size[0]; x++) {
-                    if (x >= sizes.grid[0] || x < 0 || y >= sizes.grid[1] || y < 0) {
-                        // do nothing
-                    } else {
-                        if (currentPieces[slot].layout[y-valid.cords.y][x-valid.cords.x] == 1) {
+                    if (currentPieces[slot].layout[y-valid.cords.y][x-valid.cords.x] == 1) {
+                        if (! currentPieces[slot].anti) {
                             getChunkFromCords({x:x,y:y}).css('background',currentPieces[slot].color)
+                            grid[y][x] = 1
+                        } else {
+                            getChunkFromCords({x:x,y:y}).css('background',"rgba(238, 228, 218, 0.35)")
+                            grid[y][x] = 0
                         }
-                        grid[y][x] = currentPieces[slot].layout[y-valid.cords.y][x-valid.cords.x]
                     }
                 }
             }
@@ -418,10 +451,10 @@ function dropPiece() {
                 // WRITE DIS FUNCTION ---------------------------------
             
             // check if player has lost
-                // WRITE DIS FUNCTION ---------------------------------
-                // WRITE DIS FUNCTION ---------------------------------
-                // WRITE DIS FUNCTION ---------------------------------
-                // WRITE DIS FUNCTION ---------------------------------
+            var gameOver = checkGameOver();
+            if (gameOver) {
+                $(".game-over").removeClass("hidden")
+            }
 
             // Check if a re-roll is needed...
             // Don't judge me. A loop is overkill IMHO
@@ -449,7 +482,9 @@ function init() {
         initGrid(sizes.grid);
 
         Roll();
-
+        
+        $( "#again" ).click(again);
+        
         $(window).resize(function () {
             updateDragbox(1)
             updateDragbox(2)
@@ -472,6 +507,21 @@ function getOffset (elem1, elem2) {
         left:dx
     };
     return offset
+}
+
+function colorGrid () {
+    // for debugging
+    for (var y = 0; y < grid.length; y++) {
+        for (var x = 0; x < grid[y].length; x++) {
+            if (grid[y][x] == 1) getChunkFromCords({x:x,y:y}).css('background','black')
+            if (grid[y][x] == 0) getChunkFromCords({x:x,y:y}).css('background','rgba(238, 228, 218, 0.35)')
+        }
+    }
+}
+function getChunkFromCords(cords) {
+    var x = cords.x+1
+    var y = cords.y+1
+    return $(String.format('.grid-container .grid-row:nth-of-type({1}) .chunk:nth-of-type({0})',cords.x+1,cords.y+1));
 }
 
 // General Utilities
