@@ -181,9 +181,12 @@ body {
     
     animation-name: fadeIn;
     animation-duration: 1s;
-    
     -webkit-animation-name: fadeIn;
     -webkit-animation-duration: 1s;
+    -moz-animation-name: fadeIn;
+    -moz-animation-duration: 1s;
+    -o-animation-name: fadeIn;
+    -o-animation-duration: 1s;
 }
 
 .chunk:last-child {
@@ -251,11 +254,14 @@ body {
     opacity: 50% !important;
     background: rgba(0, 0, 0, 0.5) !important;
     
-    animation: anti 5s;
+    animation: anti 2s;
     animation-iteration-count:infinite;
-    
-    -webkit-animation: anti 5s;
+    -webkit-animation: anti 2s;
     -webkit-animation-iteration-count:infinite;
+    -moz-animation: anti 2s;
+    -moz-animation-iteration-count:infinite;
+    -o-animation: anti 2s;
+    -o-animation-iteration-count:infinite;
 }
 
 .drag-container {
