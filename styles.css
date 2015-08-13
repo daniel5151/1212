@@ -79,7 +79,7 @@ body {
 
 /*Playing Field*/
 #right {
-    margin-bottom: 2em;
+    margin-bottom: 100px;
 }
 
 #left {
@@ -273,6 +273,10 @@ body {
         margin: auto;
     }
     
+    #right {
+        margin-bottom: 50px;
+    }
+    
     .game-over {
         width: 300px;
         height: 300px;
@@ -356,7 +360,7 @@ body {
     #right {
         float: left;
         width: 220px;
-        margin-bottom: 2em;
+        margin-bottom: 100px;
     }
     
     .game-over {
@@ -464,7 +468,7 @@ body {
     #right {
         float: left;
         width: 110px;
-        margin-bottom: 2em;
+        margin-bottom: 50px;
     }
     
     .game-over {

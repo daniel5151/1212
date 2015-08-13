@@ -506,9 +506,9 @@ function Roll() {
     removePiece(2)
     removePiece(3)
 
-    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation(), randomBoolean(0.1))
-    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation(), randomBoolean(0.1))
-    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), randomBoolean(0.1))
+    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation(), randomBoolean(0.05))
+    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation(), randomBoolean(0.05))
+    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), randomBoolean(0.05))
 }
 
 function pickUpPiece() {
