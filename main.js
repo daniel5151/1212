@@ -330,14 +330,14 @@ function returnPieceIfValidDrop(drag_container) {
     }
 }
 
-function returnStartChunksForLnClear (cords, layout) {
+function returnStartChunksForLnClear(cords, layout) {
     var sx = cords.x;
     var sy = cords.y;
-    
+
     var cleared = {
-        linesCleared:0,
-        row:{},
-        col:{}
+        linesCleared: 0,
+        row: {},
+        col: {}
     };
     for (var y = 0; y < layout.length; y++) {
         for (var x = 0; x < layout[y].length; x++) {
@@ -345,26 +345,32 @@ function returnStartChunksForLnClear (cords, layout) {
                 // check column
                 var clearedCol = true;
                 for (var col = 0; col < grid[0].length; col++) {
-                    if (grid[col][sx+x] == 0) clearedCol = false;
+                    if (grid[col][sx + x] == 0) clearedCol = false;
                 }
-                if (clearedCol && (!cleared.col[sx+x])) {
-                    cleared.col[sx+x] = {x:sx+x,y:sy+y};
-                    cleared.linesCleared+=1
+                if (clearedCol && (!cleared.col[sx + x])) {
+                    cleared.col[sx + x] = {
+                        x: sx + x,
+                        y: sy + y
+                    };
+                    cleared.linesCleared += 1
                 }
-                
+
                 // check row
                 var clearedRow = true;
                 for (var row = 0; row < grid.length; row++) {
-                    if (grid[sy+y][row] == 0) clearedRow = false;
+                    if (grid[sy + y][row] == 0) clearedRow = false;
                 }
-                if (clearedRow && (!cleared.row[sy+y])) {
-                    cleared.row[sy+y] = {x:sx+x,y:sy+y}
-                    cleared.linesCleared+=1
+                if (clearedRow && (!cleared.row[sy + y])) {
+                    cleared.row[sy + y] = {
+                        x: sx + x,
+                        y: sy + y
+                    }
+                    cleared.linesCleared += 1
                 }
             }
         }
     }
-                    
+
     if (jQuery.isEmptyObject(cleared.row) && jQuery.isEmptyObject(cleared.col)) {
         return false;
     } else {
@@ -379,7 +385,7 @@ var updateHtml = {
             for (var x = 0; x < grid[y].length; x++) {
                 var color;
                 if (!colorMap) {
-                    color = (grid[y][x]==0) ? 'rgba(238, 228, 218, 0.35)' : 'black';
+                    color = (grid[y][x] == 0) ? 'rgba(238, 228, 218, 0.35)' : 'black';
                 } else {
                     color = (colorMap[y][x] == 0) ? 'rgba(238, 228, 218, 0.35)' : colorMap[y][x];
                 }
@@ -411,10 +417,10 @@ var updateHtml = {
                 .empty()
                 .css('top', 0)
                 .css('left', 0);
-            
+
             var piece = currentPieces[slot];
             if (piece == 'EMPTY') continue;
-            
+
             // generate new html from info in currpieces
             var htmlRow = "<div class='chunk-row'></div>";
             var htmlChunk = "<div class='chunk'></div>";
@@ -438,7 +444,7 @@ var updateHtml = {
                     if (!$(this).hasClass("placeholder")) $(this).addClass("anti-chunk")
                 })
             }
-            
+
             updateDragbox(slot)
         }
     },
@@ -466,25 +472,44 @@ var updateHtml = {
     }
 }
 
-
-// TEMPORARY
-var moves = 0
-
 function checkGameOver() {
-    if (moves < 20) {
-        moves++
-        return false
-    } else {
-        moves = 0
-        return true;
+    var validMoves = 0;
+    for (var slot = 1; slot <= 3; slot++) {
+        if (currentPieces[slot]=='EMPTY') {
+            continue
+        }
+        console.log(currentPieces[slot].type)
+        for (var gy = 0; gy < grid.length; gy++) {
+            for (var gx = 0; gx < grid[gy].length; gx++) {
+                // localGrid is a grid localized to the are a piece wished to occupy
+                var localGrid = getLocalizedGrid({x:gx,y:gy}, currentPieces[slot].size)
+                var layout = currentPieces[slot].layout;
+                
+                // This loop checks to see if the local grid can support the piece being placed
+                var valid = true;
+                for (var y = 0; y < localGrid.length; y++) {
+                    for (var x = 0; x < localGrid[y].length; x++) {
+                        if (!currentPieces[slot].anti) {
+                            if (localGrid[y][x] !== 0 && layout[y][x] == 1) valid = false;
+                        } else {
+                            if (localGrid[y][x] == 2 && layout[y][x] == 1) valid = false;
+                        }
+                    }
+                }
+                if (valid) validMoves += 1;
+            }
+        }
+        console.log(validMoves)
     }
+    if (validMoves > 0) return false
+    else return true
 }
 
 function restart() {
     // Hide the gameover overlay
     $(".game-over").addClass("hidden")
     isGameOver = false;
-    
+
     // reset score
     score = 0
     updateHtml.score(-score)
@@ -497,7 +522,7 @@ function restart() {
 
     // Roll new pieces
     Roll()
-    
+
     save()
 }
 
@@ -594,13 +619,13 @@ function dropPiece() {
             // update score for piece placement
             updateHtml.score(currentPieces[slot].points)
             score += currentPieces[slot].points
-            
+
             // check to update line graphics and add score from line clear
             var cleared = returnStartChunksForLnClear(piece.cords, currentPieces[slot].layout)
             if (cleared !== false) {
                 // animate the line clear
                 updateHtml.clearLines(cleared)
-                // update the board
+                    // update the board
                 for (var r in cleared.row) {
                     var row = cleared.row[r].y;
                     for (var col = 0; col < grid[row].length; col++) {
@@ -613,27 +638,20 @@ function dropPiece() {
                         grid[row][col] = 0;
                     }
                 }
-                
-                var clearScore = 12 * cleared.linesCleared + 12*(cleared.linesCleared-1);
+
+                var clearScore = 12 * cleared.linesCleared + 12 * (cleared.linesCleared - 1);
                 updateHtml.score(clearScore);
                 score += clearScore;
             }
-            
+
             // check if we need to update topScore
             if (score > topScore) {
-                updateHtml.topScore(score-topScore);
+                updateHtml.topScore(score - topScore);
                 topScore = score;
             }
-            
+
             // delete the piece
             removePiece(slot)
-
-            // check if player has lost
-            var gameOver = checkGameOver();
-            if (gameOver) {
-                $(".game-over").removeClass("hidden")
-                isGameOver = true;
-            }
 
             // Check if a re-roll is needed...
             // Don't judge me. A loop is overkill IMHO
@@ -641,6 +659,13 @@ function dropPiece() {
                 Roll()
             }
             
+            // check if player has lost
+            var gameOver = checkGameOver();
+            if (gameOver) {
+                $(".game-over").removeClass("hidden")
+                isGameOver = true;
+            }
+
             save();
         })
     } else {
@@ -661,13 +686,13 @@ function init() {
 
     initGrid(sizes.grid);
 
-    if(!localStorage.getItem('score')) {
+    if (!localStorage.getItem('score')) {
         Roll();
         save()
     } else {
         load()
     }
-    
+
     $("#again").click(restart);
 
     $(window).resize(function () {
@@ -736,7 +761,7 @@ function getLocalizedGrid(cords, size) {
 }
 
 // saving and loading
-function save () {
+function save() {
     localStorage.setItem('grid', JSON.stringify(grid));
     localStorage.setItem('grid-colormap', JSON.stringify(genColorMap()));
     localStorage.setItem('currentPieces', JSON.stringify(currentPieces));
@@ -744,21 +769,22 @@ function save () {
     localStorage.setItem('topScore', JSON.stringify(topScore));
     localStorage.setItem('isGameOver', JSON.stringify(isGameOver));
 }
-function load () {
+
+function load() {
     grid = JSON.parse(localStorage.getItem('grid'))
-    
+
     var colorMap = JSON.parse(localStorage.getItem('grid-colormap'))
     updateHtml.grid(colorMap)
-    
+
     currentPieces = JSON.parse(localStorage.getItem('currentPieces'))
     updateHtml.pieces();
-    
+
     score = JSON.parse(localStorage.getItem('score'));
     updateHtml.score(0);
-    
+
     topScore = JSON.parse(localStorage.getItem('topScore'));
     updateHtml.topScore(0);
-    
+
     isGameOver = JSON.parse(localStorage.getItem('isGameOver'))
     if (isGameOver) $(".game-over").removeClass("hidden")
 }
