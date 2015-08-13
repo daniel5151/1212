@@ -203,10 +203,6 @@ function spawnPiece(type, slot, rotation, anti) {
             if (!$(this).hasClass("placeholder")) $(this).addClass("anti-chunk")
         })
     }
-    
-    $(container).find('.chunk').each(function () {
-        $(this).fadeOut(0).fadeIn('slow')
-    })
 
     // Fix cursor positioning and size issues
     updateDragbox(slot);
@@ -283,28 +279,7 @@ function Roll() {
     spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), randomBoolean(0.1))
 }
 
-function randomBoolean (percent_odds) {
-    var boolean = (Math.random() < percent_odds) ? true : false
-    return boolean
-}
-
-function getLocalizedGrid(cords, size) {
-    var localGrid = [];
-    for (var y = cords.y; y < cords.y+size[1]; y++) {
-        var t = []
-        for (var x = cords.x; x < cords.x+size[0]; x++) {
-            if (x >= sizes.grid[0] || x < 0 || y >= sizes.grid[1] || y < 0) {
-                t.push(2)
-            } else {
-                t.push(grid[y][x])
-            }
-        }
-        localGrid.push(t)
-    }
-    return localGrid;
-}
-
-function returnValidPieceInfo(drag_container) {
+function returnPieceIfValidDrop(drag_container) {
     var slot = $(drag_container).parent().attr('id').match(/\d+/)[0];
     var layout = currentPieces[slot].layout
     
@@ -337,7 +312,7 @@ function returnValidPieceInfo(drag_container) {
     
     if (valid) {
         // return the chunk to which the piece should gravitate
-        return {cords:cords, piece:getChunkFromCords(cords)};
+        return {cords:cords, html:getChunkFromCords(cords)};
     } else {
         return false;
     }
@@ -382,9 +357,9 @@ function dropPiece() {
     var slot = $(this).parent().attr('id').match(/\d+/)[0]
     if (currentPieces[slot] == 'EMPTY') return true
     
-    var valid = returnValidPieceInfo(this)
+    var piece = returnPieceIfValidDrop(this)
     
-    if (valid!==false) {
+    if (piece!==false) {
         // update the grid visually and object
         // WRITE DIS FUNCTION
         
@@ -406,7 +381,7 @@ function dropPiece() {
         // the piece inside aligns with the grid where it's being placed
         
         // our base position is the coordinates of the chunk on the grid
-        var position = valid.piece.offset()
+        var position = piece.html.offset()
         
         // we need to offset these coordinates by factoring in the fact that
         // the chunk is contained within a piece...
@@ -427,9 +402,9 @@ function dropPiece() {
             });
             
             // Paint and update the grid where the piece is to be placed
-            for (var y = valid.cords.y; y < valid.cords.y+currentPieces[slot].size[1]; y++) {
-                for (var x = valid.cords.x; x < valid.cords.x+currentPieces[slot].size[0]; x++) {
-                    if (currentPieces[slot].layout[y-valid.cords.y][x-valid.cords.x] == 1) {
+            for (var y = piece.cords.y; y < piece.cords.y+currentPieces[slot].size[1]; y++) {
+                for (var x = piece.cords.x; x < piece.cords.x+currentPieces[slot].size[0]; x++) {
+                    if (currentPieces[slot].layout[y-piece.cords.y][x-piece.cords.x] == 1) {
                         if (! currentPieces[slot].anti) {
                             getChunkFromCords({x:x,y:y}).css('background',currentPieces[slot].color)
                             grid[y][x] = 1
@@ -524,6 +499,21 @@ function getChunkFromCords(cords) {
     return $(String.format('.grid-container .grid-row:nth-of-type({1}) .chunk:nth-of-type({0})',cords.x+1,cords.y+1));
 }
 
+function getLocalizedGrid(cords, size) {
+    var localGrid = [];
+    for (var y = cords.y; y < cords.y+size[1]; y++) {
+        var t = []
+        for (var x = cords.x; x < cords.x+size[0]; x++) {
+            if (x >= sizes.grid[0] || x < 0 || y >= sizes.grid[1] || y < 0) {
+                t.push(2)
+            } else {
+                t.push(grid[y][x])
+            }
+        }
+        localGrid.push(t)
+    }
+    return localGrid;
+}
 // General Utilities
 function pickRandomProperty(obj) {
     var result;
@@ -553,7 +543,10 @@ String.format = function () {
 function getRandomRotation() {
     return (Math.floor(Math.random() * 4)) * 90;
 }
-
+function randomBoolean (percent_odds) {
+    var boolean = (Math.random() < percent_odds) ? true : false
+    return boolean
+}
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }

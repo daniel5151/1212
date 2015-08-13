@@ -93,8 +93,8 @@ body {
     border-radius: 3%;
     text-align: center;
     
-    transition: opacity 1s linear;
-    -webkit-transition: opacity 1s linear;
+    transition: opacity 1s;
+    -webkit-transition: opacity 1s;
 }
 
 .game-over p {
@@ -147,6 +147,11 @@ body {
     height: 46px;
 }
 
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
 .chunk {
     width: 46px;
     height: 46px;
@@ -155,6 +160,9 @@ body {
     float: left;
     margin-right: 2px;
     margin-bottom: 2px;
+    
+    animation-name: fadeIn;
+    animation-duration: 1s;
 }
 
 .chunk:last-child {
