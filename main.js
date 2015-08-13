@@ -335,6 +335,7 @@ function returnStartChunksForLnClear (cords, layout) {
     var sy = cords.y;
     
     var cleared = {
+        linesCleared:0,
         row:{},
         col:{}
     };
@@ -348,6 +349,7 @@ function returnStartChunksForLnClear (cords, layout) {
                 }
                 if (clearedCol && (!cleared.col[sx+x])) {
                     cleared.col[sx+x] = {x:sx+x,y:sy+y};
+                    cleared.linesCleared+=1
                 }
                 
                 // check row
@@ -357,6 +359,7 @@ function returnStartChunksForLnClear (cords, layout) {
                 }
                 if (clearedRow && (!cleared.row[sy+y])) {
                     cleared.row[sy+y] = {x:sx+x,y:sy+y}
+                    cleared.linesCleared+=1
                 }
             }
         }
@@ -437,6 +440,28 @@ var updateHtml = {
             }
             
             updateDragbox(slot)
+        }
+    },
+    clearLines: function (cleared) {
+        for (var r in cleared.row) {
+            var row = cleared.row[r].y;
+            for (var col = 0; col < grid[row].length; col++) {
+                // make nicer
+                getChunkFromCords({
+                    x: col,
+                    y: row
+                }).css('background', 'rgba(238, 228, 218, 0.35)')
+            }
+        }
+        for (var c in cleared.col) {
+            var col = cleared.col[c].x;
+            for (var row = 0; row < grid[col].length; row++) {
+                // make nicer
+                getChunkFromCords({
+                    x: col,
+                    y: row,
+                }).css('background', 'rgba(238, 228, 218, 0.35)')
+            }
         }
     }
 }
@@ -572,10 +597,26 @@ function dropPiece() {
             
             // check to update line graphics and add score from line clear
             var cleared = returnStartChunksForLnClear(piece.cords, currentPieces[slot].layout)
-            console.log(cleared)
             if (cleared !== false) {
-                // Actualy animate the line clear
+                // animate the line clear
+                updateHtml.clearLines(cleared)
                 // update the board
+                for (var r in cleared.row) {
+                    var row = cleared.row[r].y;
+                    for (var col = 0; col < grid[row].length; col++) {
+                        grid[row][col] = 0;
+                    }
+                }
+                for (var c in cleared.col) {
+                    var col = cleared.col[c].x;
+                    for (var row = 0; row < grid[col].length; row++) {
+                        grid[row][col] = 0;
+                    }
+                }
+                
+                var clearScore = 12 * cleared.linesCleared + 12*(cleared.linesCleared-1);
+                updateHtml.score(clearScore);
+                score += clearScore;
             }
             
             // check if we need to update topScore
