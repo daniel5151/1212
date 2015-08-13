@@ -498,28 +498,28 @@ function dropPiece() {
 
 // FIRSTRUN MAIN FUNCTION
 function init() {
-        initDynamicSizes();
-        initGridHtml()
-        initCSS();
+    initDynamicSizes();
+    initGridHtml()
+    initCSS();
 
-        initDragboxes();
+    initDragboxes();
 
-        initGrid(sizes.grid);
+    initGrid(sizes.grid);
 
-        Roll();
+    Roll();
 
-        $("#again").click(restart);
+    $("#again").click(restart);
 
-        $(window).resize(function () {
-            updateDragbox(1)
-            updateDragbox(2)
-            updateDragbox(3)
-            $(".drag-container").each(function () {
-                changePieceSize($(this).parent().attr('id').match(/\d+/)[0], 'shrink')
-            })
-        });
-    }
-    // Run
+    $(window).resize(function () {
+        updateDragbox(1)
+        updateDragbox(2)
+        updateDragbox(3)
+        $(".drag-container").each(function () {
+            changePieceSize($(this).parent().attr('id').match(/\d+/)[0], 'shrink')
+        })
+    });
+}
+// Run
 window.onload = init;
 
 // Specialized Utilities
@@ -535,7 +535,6 @@ function getOffset(elem1, elem2) {
 }
 
 function colorGrid() {
-    // for debugging
     for (var y = 0; y < grid.length; y++) {
         for (var x = 0; x < grid[y].length; x++) {
             if (grid[y][x] == 1) getChunkFromCords({
@@ -550,6 +549,39 @@ function colorGrid() {
     }
 }
 
+function initGridColored(colorMap) {
+    for (var y = 0; y < grid.length; y++) {
+        for (var x = 0; x < grid[y].length; x++) {
+            var color = (colorMap[y][x] == 0) ? 'rgba(238, 228, 218, 0.35)' : colorMap[y][x];
+
+            getChunkFromCords({
+                x: x,
+                y: y
+            }).css('background', color)
+            grid[y][x] = (colorMap[y][x] == 0) ? 0 : 1;
+        }
+    }
+}
+
+function generateColorMap() {
+    var colorMap = []
+    for (var y = 0; y < grid.length; y++) {
+        var row = []
+        for (var x = 0; x < grid[y].length; x++) {
+            if (grid[y][x] == 1) {
+                row.push(getChunkFromCords({
+                    x: x,
+                    y: y
+                }).css('background'))
+            } else {
+                row.push(0)
+            }
+        }
+        colorMap.push(row)
+    }
+    return colorMap;
+}
+
 function getChunkFromCords(cords) {
     var x = cords.x + 1
     var y = cords.y + 1
@@ -557,21 +589,21 @@ function getChunkFromCords(cords) {
 }
 
 function getLocalizedGrid(cords, size) {
-        var localGrid = [];
-        for (var y = cords.y; y < cords.y + size[1]; y++) {
-            var t = []
-            for (var x = cords.x; x < cords.x + size[0]; x++) {
-                if (x >= sizes.grid[0] || x < 0 || y >= sizes.grid[1] || y < 0) {
-                    t.push(2)
-                } else {
-                    t.push(grid[y][x])
-                }
+    var localGrid = [];
+    for (var y = cords.y; y < cords.y + size[1]; y++) {
+        var t = []
+        for (var x = cords.x; x < cords.x + size[0]; x++) {
+            if (x >= sizes.grid[0] || x < 0 || y >= sizes.grid[1] || y < 0) {
+                t.push(2)
+            } else {
+                t.push(grid[y][x])
             }
-            localGrid.push(t)
         }
-        return localGrid;
+        localGrid.push(t)
     }
-    // General Utilities
+    return localGrid;
+}
+// General Utilities
 function pickRandomProperty(obj) {
     var result;
     var count = 0;
