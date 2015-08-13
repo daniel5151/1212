@@ -330,8 +330,43 @@ function returnPieceIfValidDrop(drag_container) {
     }
 }
 
-function returnChunkIfLnClear () {
-    return false;
+function returnStartChunksForLnClear (cords, layout) {
+    var sx = cords.x;
+    var sy = cords.y;
+    
+    var cleared = {
+        row:{},
+        col:{}
+    };
+    for (var y = 0; y < layout.length; y++) {
+        for (var x = 0; x < layout[y].length; x++) {
+            if (layout[y][x] == 1) {
+                // check column
+                var clearedCol = true;
+                for (var col = 0; col < grid[0].length; col++) {
+                    if (grid[col][sx+x] == 0) clearedCol = false;
+                }
+                if (clearedCol && (!cleared.col[sx+x])) {
+                    cleared.col[sx+x] = {x:sx+x,y:sy+y};
+                }
+                
+                // check row
+                var clearedRow = true;
+                for (var row = 0; row < grid.length; row++) {
+                    if (grid[sy+y][row] == 0) clearedRow = false;
+                }
+                if (clearedRow && (!cleared.row[sy+y])) {
+                    cleared.row[sy+y] = {x:sx+x,y:sy+y}
+                }
+            }
+        }
+    }
+                    
+    if (jQuery.isEmptyObject(cleared.row) && jQuery.isEmptyObject(cleared.col)) {
+        return false;
+    } else {
+        return cleared
+    }
 }
 
 // HTML Update function -- MIGRATE EXISTING FUNCTIONS HERE
@@ -341,7 +376,7 @@ var updateHtml = {
             for (var x = 0; x < grid[y].length; x++) {
                 var color;
                 if (!colorMap) {
-                    color = 'rgba(238, 228, 218, 0.35)'
+                    color = (grid[y][x]==0) ? 'rgba(238, 228, 218, 0.35)' : 'black';
                 } else {
                     color = (colorMap[y][x] == 0) ? 'rgba(238, 228, 218, 0.35)' : colorMap[y][x];
                 }
@@ -411,7 +446,7 @@ var updateHtml = {
 var moves = 0
 
 function checkGameOver() {
-    if (moves < 2) {
+    if (moves < 20) {
         moves++
         return false
     } else {
@@ -536,11 +571,12 @@ function dropPiece() {
             score += currentPieces[slot].points
             
             // check to update line graphics and add score from line clear
-            var lnClearStartChunks = returnChunkIfLnClear(piece.cords, currentPieces[slot].layout)
-            if (lnClearStartChunks !== false) {
+            var cleared = returnStartChunksForLnClear(piece.cords, currentPieces[slot].layout)
+            console.log(cleared)
+            if (cleared !== false) {
                 // Actualy animate the line clear
+                // update the board
             }
-            // update board
             
             // check if we need to update topScore
             if (score > topScore) {
