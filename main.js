@@ -309,15 +309,18 @@ function returnPieceIfValidDrop(drag_container) {
 
     // This loop checks to see if the local grid can support the piece being placed
     var valid = true;
+    var antiChunkOnEmptySpace = 0;
     for (var y = 0; y < localGrid.length; y++) {
         for (var x = 0; x < localGrid[y].length; x++) {
             if (!currentPieces[slot].anti) {
                 if (localGrid[y][x] !== 0 && layout[y][x] == 1) valid = false;
             } else {
                 if (localGrid[y][x] == 2 && layout[y][x] == 1) valid = false;
+                if (localGrid[y][x] == 0 && layout[y][x] == 1) antiChunkOnEmptySpace+=1
             }
         }
     }
+    if (antiChunkOnEmptySpace == currentPieces[slot].points) valid = false;
 
     if (valid) {
         // return the chunk to which the piece should gravitate
@@ -478,7 +481,6 @@ function checkGameOver() {
         if (currentPieces[slot]=='EMPTY') {
             continue
         }
-        console.log(currentPieces[slot].type)
         for (var gy = 0; gy < grid.length; gy++) {
             for (var gx = 0; gx < grid[gy].length; gx++) {
                 // localGrid is a grid localized to the are a piece wished to occupy
@@ -499,7 +501,6 @@ function checkGameOver() {
                 if (valid) validMoves += 1;
             }
         }
-        console.log(validMoves)
     }
     if (validMoves > 0) return false
     else return true
