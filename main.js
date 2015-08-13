@@ -489,15 +489,18 @@ function checkGameOver() {
                 
                 // This loop checks to see if the local grid can support the piece being placed
                 var valid = true;
+                var antiChunkOnEmptySpace = 0;
                 for (var y = 0; y < localGrid.length; y++) {
                     for (var x = 0; x < localGrid[y].length; x++) {
                         if (!currentPieces[slot].anti) {
                             if (localGrid[y][x] !== 0 && layout[y][x] == 1) valid = false;
                         } else {
                             if (localGrid[y][x] == 2 && layout[y][x] == 1) valid = false;
+                            if (localGrid[y][x] == 0 && layout[y][x] == 1) antiChunkOnEmptySpace += 1;
                         }
                     }
                 }
+                if (antiChunkOnEmptySpace == currentPieces[slot].points) valid = false;
                 if (valid) validMoves += 1;
             }
         }
@@ -531,10 +534,12 @@ function Roll() {
     removePiece(1)
     removePiece(2)
     removePiece(3)
-
-    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation(), randomBoolean(0.05))
-    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation(), randomBoolean(0.05))
-    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), randomBoolean(0.05))
+    
+    var odds = randomBoolean(0.05);
+    
+    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation(), odds)
+    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation(), odds)
+    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), odds)
 }
 
 function pickUpPiece() {
