@@ -329,14 +329,90 @@ function returnPieceIfValidDrop(drag_container) {
     }
 }
 
+//function colorGrid() {
+//    for (var y = 0; y < grid.length; y++) {
+//        for (var x = 0; x < grid[y].length; x++) {
+//            if (grid[y][x] == 1) getChunkFromCords({
+//                x: x,
+//                y: y
+//            }).css('background', 'black')
+//            if (grid[y][x] == 0) getChunkFromCords({
+//                x: x,
+//                y: y
+//            }).css('background', 'rgba(238, 228, 218, 0.35)')
+//        }
+//    }
+//}
+
 // HTML Update function -- MIGRATE EXISTING FUNCTIONS HERE
 var updateHtml = {
+    grid: function (colorMap) {
+        for (var y = 0; y < grid.length; y++) {
+            for (var x = 0; x < grid[y].length; x++) {
+                var color;
+                if (!colorMap) {
+                    color = 'rgba(238, 228, 218, 0.35)'
+                } else {
+                    color = (colorMap[y][x] == 0) ? 'rgba(238, 228, 218, 0.35)' : colorMap[y][x];
+                }
+                getChunkFromCords({
+                    x: x,
+                    y: y
+                }).css('background', color)
+            }
+        }
+    },
     score: function (dScore) {
         $(".score")
             .prop('number', score)
             .animateNumber({
                 number: score + dScore
             }, 200);
+    },
+    topScore: function (dScore) {
+        $(".top")
+            .prop('number', topScore)
+            .animateNumber({
+                number: topScore + dScore
+            }, 200);
+    },
+    pieces: function () {
+        for (var slot = 1; slot <= 3; slot++) {
+            // remove existng piece html
+            $('#s' + slot + " .drag-container")
+                .empty()
+                .css('top', 0)
+                .css('left', 0);
+            
+            var piece = currentPieces[slot];
+            if (piece == 'EMPTY') continue;
+            
+            // generate new html from info in currpieces
+            var htmlRow = "<div class='chunk-row'></div>";
+            var htmlChunk = "<div class='chunk'></div>";
+            var htmlPlaceholder = "<div class='chunk placeholder'></div>";
+            var container = '#s' + slot + ' .drag-container'
+
+            $(container).append(String.format("<div class='piece {0}'></div>", piece.type))
+            for (var row = 0; row < piece.layout.length; row++) {
+                $(container + " ." + piece.type).append(htmlRow)
+                for (var chunk = 0; chunk < piece.layout[row].length; chunk++) {
+                    if (piece.layout[row][chunk] == 0) {
+                        $(container + " ." + piece.type + " .chunk-row:last-child").append(htmlPlaceholder)
+                    } else {
+                        $(container + " ." + piece.type + " .chunk-row:last-child").append(htmlChunk)
+                    }
+                }
+            }
+
+            if (piece.anti) {
+                $(container).find('.chunk').each(function () {
+                    if (!$(this).hasClass("placeholder")) $(this).addClass("anti-chunk")
+                })
+            }
+            
+            updateDragbox(slot)
+        }
     }
 }
 
@@ -366,10 +442,12 @@ function restart() {
     initGrid(sizes.grid)
 
     // color existing grid blank
-    colorGrid()
+    updateHtml.grid()
 
     // Roll new pieces
     Roll()
+    
+    save()
 }
 
 function Roll() {
@@ -466,6 +544,12 @@ function dropPiece() {
             updateHtml.score(currentPieces[slot].points)
             score += currentPieces[slot].points
 
+            // check if we need to update topScore
+            if (score > topScore) {
+                updateHtml.topScore(score-topScore);
+                topScore = score;
+            }
+            
             // check to update line graphics and score
             // WRITE DIS FUNCTION ---------------------------------
             // WRITE DIS FUNCTION ---------------------------------
@@ -486,6 +570,8 @@ function dropPiece() {
             if (currentPieces[1] == 'EMPTY' && currentPieces[2] == 'EMPTY' && currentPieces[3] == 'EMPTY') {
                 Roll()
             }
+            
+            save();
         })
     } else {
         // Shrink them back
@@ -501,13 +587,19 @@ function init() {
     initDynamicSizes();
     initGridHtml()
     initCSS();
-
     initDragboxes();
 
     initGrid(sizes.grid);
 
-    Roll();
-
+    if(!localStorage.getItem('score')) {
+        Roll();
+        save()
+    } else {
+        load()
+    }
+    
+    
+    
     $("#again").click(restart);
 
     $(window).resize(function () {
@@ -534,36 +626,7 @@ function getOffset(elem1, elem2) {
     return offset
 }
 
-function colorGrid() {
-    for (var y = 0; y < grid.length; y++) {
-        for (var x = 0; x < grid[y].length; x++) {
-            if (grid[y][x] == 1) getChunkFromCords({
-                x: x,
-                y: y
-            }).css('background', 'black')
-            if (grid[y][x] == 0) getChunkFromCords({
-                x: x,
-                y: y
-            }).css('background', 'rgba(238, 228, 218, 0.35)')
-        }
-    }
-}
-
-function initGridColored(colorMap) {
-    for (var y = 0; y < grid.length; y++) {
-        for (var x = 0; x < grid[y].length; x++) {
-            var color = (colorMap[y][x] == 0) ? 'rgba(238, 228, 218, 0.35)' : colorMap[y][x];
-
-            getChunkFromCords({
-                x: x,
-                y: y
-            }).css('background', color)
-            grid[y][x] = (colorMap[y][x] == 0) ? 0 : 1;
-        }
-    }
-}
-
-function generateColorMap() {
+function genColorMap() {
     var colorMap = []
     for (var y = 0; y < grid.length; y++) {
         var row = []
@@ -603,6 +666,31 @@ function getLocalizedGrid(cords, size) {
     }
     return localGrid;
 }
+
+// saving and loading
+function save () {
+    localStorage.setItem('grid', JSON.stringify(grid));
+    localStorage.setItem('grid-colormap', JSON.stringify(genColorMap()));
+    localStorage.setItem('currentPieces', JSON.stringify(currentPieces));
+    localStorage.setItem('score', JSON.stringify(score));
+    localStorage.setItem('topScore', JSON.stringify(topScore));
+}
+function load () {
+    grid = JSON.parse(localStorage.getItem('grid'))
+    
+    var colorMap = JSON.parse(localStorage.getItem('grid-colormap'))
+    updateHtml.grid(colorMap)
+    
+    currentPieces = JSON.parse(localStorage.getItem('currentPieces'))
+    updateHtml.pieces();
+    
+    score = JSON.parse(localStorage.getItem('score'));
+    updateHtml.score(0);
+    
+    topScore = JSON.parse(localStorage.getItem('topScore'));
+    updateHtml.topScore(0);
+}
+
 // General Utilities
 function pickRandomProperty(obj) {
     var result;
