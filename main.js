@@ -102,6 +102,7 @@ var Pieces = {
         color: '#0078FF'
     },
 };
+var isGameOver = false;
 var score = 0;
 var topScore = 0;
 var currentPieces = {
@@ -329,20 +330,9 @@ function returnPieceIfValidDrop(drag_container) {
     }
 }
 
-//function colorGrid() {
-//    for (var y = 0; y < grid.length; y++) {
-//        for (var x = 0; x < grid[y].length; x++) {
-//            if (grid[y][x] == 1) getChunkFromCords({
-//                x: x,
-//                y: y
-//            }).css('background', 'black')
-//            if (grid[y][x] == 0) getChunkFromCords({
-//                x: x,
-//                y: y
-//            }).css('background', 'rgba(238, 228, 218, 0.35)')
-//        }
-//    }
-//}
+function returnChunkIfLnClear () {
+    return false;
+}
 
 // HTML Update function -- MIGRATE EXISTING FUNCTIONS HERE
 var updateHtml = {
@@ -433,7 +423,8 @@ function checkGameOver() {
 function restart() {
     // Hide the gameover overlay
     $(".game-over").addClass("hidden")
-
+    isGameOver = false;
+    
     // reset score
     score = 0
     updateHtml.score(-score)
@@ -543,19 +534,20 @@ function dropPiece() {
             // update score for piece placement
             updateHtml.score(currentPieces[slot].points)
             score += currentPieces[slot].points
-
+            
+            // check to update line graphics and add score from line clear
+            var lnClearStartChunks = returnChunkIfLnClear(piece.cords, currentPieces[slot].layout)
+            if (lnClearStartChunks !== false) {
+                // Actualy animate the line clear
+            }
+            // update board
+            
             // check if we need to update topScore
             if (score > topScore) {
                 updateHtml.topScore(score-topScore);
                 topScore = score;
             }
             
-            // check to update line graphics and score
-            // WRITE DIS FUNCTION ---------------------------------
-            // WRITE DIS FUNCTION ---------------------------------
-            // WRITE DIS FUNCTION ---------------------------------
-            // WRITE DIS FUNCTION ---------------------------------
-
             // delete the piece
             removePiece(slot)
 
@@ -563,6 +555,7 @@ function dropPiece() {
             var gameOver = checkGameOver();
             if (gameOver) {
                 $(".game-over").removeClass("hidden")
+                isGameOver = true;
             }
 
             // Check if a re-roll is needed...
@@ -597,8 +590,6 @@ function init() {
     } else {
         load()
     }
-    
-    
     
     $("#again").click(restart);
 
@@ -674,6 +665,7 @@ function save () {
     localStorage.setItem('currentPieces', JSON.stringify(currentPieces));
     localStorage.setItem('score', JSON.stringify(score));
     localStorage.setItem('topScore', JSON.stringify(topScore));
+    localStorage.setItem('isGameOver', JSON.stringify(isGameOver));
 }
 function load () {
     grid = JSON.parse(localStorage.getItem('grid'))
@@ -689,6 +681,9 @@ function load () {
     
     topScore = JSON.parse(localStorage.getItem('topScore'));
     updateHtml.topScore(0);
+    
+    isGameOver = JSON.parse(localStorage.getItem('isGameOver'))
+    if (isGameOver) $(".game-over").removeClass("hidden")
 }
 
 // General Utilities
