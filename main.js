@@ -721,6 +721,7 @@ function init() {
 
     if (!localStorage.getItem('score')) {
         Roll();
+        topScoreNotificationFired = true;         // don't show a HS overlay if it's the user's first time playing
         save()
     } else {
         load()
