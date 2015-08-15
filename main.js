@@ -297,14 +297,20 @@ function updateDragbox(slot) {
     if (currentPieces[slot] == 'EMPTY') {
         return false
     }
+    
     // You'd think finding where to place a cursor would be easy right?
     // Guess again.
+    
+    // non touch displays should have cursor centered in piece
     var centerCursor = {
         bottom:$(".drag-container").height() / 2,
         left:$(".drag-container").width() / 2
     };
     
-    var pieceHeight = (sizes.chunk() * currentPieces[slot].length);
+    // But we must still account for the fact that some pieces grow and exceed 
+    // the boundaries of the drag-container. If we do not account for the extra
+    // chunk sticking out, the centering will be off
+    var pieceHeight = (sizes.chunk() * currentPieces[slot].layout.length);
     var pieceWidth = (sizes.chunk() * currentPieces[slot].layout[0].length);
     
     var containerPieceHDiff = pieceHeight - $(".drag-container").height()
@@ -313,11 +319,16 @@ function updateDragbox(slot) {
     if (containerPieceHDiff > 0) centerCursor.top = ($(".drag-container").height() + containerPieceHDiff) / 2
     if (containerPieceWDiff > 0) centerCursor.left = ($(".drag-container").width() + containerPieceWDiff) / 2;
     
+    // For mobile, we want to position the cursor in such a way that the player's finger does not
+    // block the piece they are trying to position.
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         if ((getScreenOrientation() == "landscape") && (getScreenType() == "smallScreen")) {
             centerCursor.left = $(".drag-container").width() + sizes.chunk() * 2;
+            centerCursor.left += containerPieceWDiff //if (containerPieceWDiff > 0) 
         } else {
             centerCursor.bottom = (getScreenType() == 'smallScreen') ? -sizes.chunk() * 2 : 0;
+            console.log(containerPieceHDiff)
+            centerCursor.bottom -= containerPieceHDiff; //if (containerPieceHDiff > 0) 
         }
     }
 
@@ -904,14 +915,25 @@ function getRandomInt(min, max) {
 }
 
 function getScreenType() {
-    if ($(window).height() >= $(window).width()) {
-        if ($(window).width() <= 600) {
+    var viewportHeight;
+    var viewportWidth;
+    if (document.compatMode === 'BackCompat') {
+        viewportHeight = document.body.clientHeight;
+        viewportWidth = document.body.clientWidth;
+    } else {
+        viewportHeight = document.documentElement.clientHeight;
+        viewportWidth = document.documentElement.clientWidth;
+    }
+
+    
+    if (viewportHeight >= viewportWidth) {
+        if (viewportWidth <= 600) {
             return 'smallScreen'
         } else {
             return 'bigScreen'
         }
     } else {
-        if ($(window).width() <= 820) {
+        if (viewportWidth <= 820) {
             return 'smallScreen'
         } else {
             return 'bigScreen'
@@ -920,7 +942,17 @@ function getScreenType() {
 }
 
 function getScreenOrientation() {
-    if ($(window).height() > $(window).width()) {
+    var viewportHeight;
+    var viewportWidth;
+    if (document.compatMode === 'BackCompat') {
+        viewportHeight = document.body.clientHeight;
+        viewportWidth = document.body.clientWidth;
+    } else {
+        viewportHeight = document.documentElement.clientHeight;
+        viewportWidth = document.documentElement.clientWidth;
+    }
+    
+    if (viewportHeight > viewportWidth) {
         return "portrait"
     } else {
         return "landscape"
