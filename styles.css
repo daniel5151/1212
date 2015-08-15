@@ -117,14 +117,14 @@ body {
     text-align: center;
     top:200px;
     
-    animation-name: fadeIn;
-    animation-duration: 1s;
     -webkit-animation-name: fadeIn;
-    -webkit-animation-duration: 1s;
     -moz-animation-name: fadeIn;
-    -moz-animation-duration: 1s;
     -o-animation-name: fadeIn;
+    animation-name: fadeIn;
+    -webkit-animation-duration: 1s;
+    -moz-animation-duration: 1s;
     -o-animation-duration: 1s;
+    animation-duration: 1s;
 }
 
 .game-over p {

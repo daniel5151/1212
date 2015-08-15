@@ -273,28 +273,26 @@ function updateDragbox(slot) {
     }
     // You'd think finding where to place a cursor would be easy right?
     // Guess again.
-    var centerCursor = false;
+    var centerCursor = {
+        bottom:$(".drag-container").height() / 2,
+        left:$(".drag-container").width() / 2
+    };
+    
+    var pieceHeight = (sizes.chunk() * currentPieces[slot].length);
+    var pieceWidth = (sizes.chunk() * currentPieces[slot].layout[0].length);
+    
+    var containerPieceHDiff = pieceHeight - $(".drag-container").height()
+    var containerPieceWDiff = pieceWidth - $(".drag-container").width()
+    
+    if (containerPieceHDiff > 0) centerCursor.top = ($(".drag-container").height() + containerPieceHDiff) / 2
+    if (containerPieceWDiff > 0) centerCursor.left = ($(".drag-container").width() + containerPieceWDiff) / 2;
+    
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        var pieceWidth = (sizes.chunk() * currentPieces[slot].layout[0].length);
-        var containerPieceWDiff = pieceWidth - $(".drag-container").width()
-
-        var bottomOffset = (getScreenType() == 'smallScreen') ? -sizes.chunk() * 2 : 0;
-
-        if (containerPieceWDiff > 0) {
-            centerCursor = {
-                left: ($(".drag-container").width() + containerPieceWDiff) / 2,
-                bottom: bottomOffset
-            }
+        if ((getScreenOrientation() == "landscape") && (getScreenType() == "smallScreen")) {
+            console.log(sizes.chunk() * 2)
+            centerCursor.left = $(".drag-container").width() + sizes.chunk() * 2; // the hell?
         } else {
-            centerCursor = {
-                left: $(".drag-container").width() / 2,
-                bottom: bottomOffset
-            }
-        }
-    } else {
-        centerCursor = {
-            left: $(".drag-container").width() / 2,
-            bottom: $(".drag-container").height() / 2
+            centerCursor.bottom = (getScreenType() == 'smallScreen') ? -sizes.chunk() * 2 : 0;
         }
     }
 
@@ -474,25 +472,26 @@ var updateHtml = {
             updateDragbox(slot)
         }
     },
+    clearChunk: function (chunk) {
+        chunk.animate({backgroundColor: 'rgba(238, 228, 218, 0.35)'},250);
+    },
     clearLines: function (cleared) {
         for (var r in cleared.row) {
             var row = cleared.row[r].y;
             for (var col = 0; col < grid[row].length; col++) {
-                // make nicer
-                getChunkFromCords({
+                updateHtml.clearChunk(getChunkFromCords({
                     x: col,
                     y: row
-                }).animate({backgroundColor: 'rgba(238, 228, 218, 0.35)'},250)
+                }))
             }
         }
         for (var c in cleared.col) {
             var col = cleared.col[c].x;
             for (var row = 0; row < grid[col].length; row++) {
-                // make nicer
-                getChunkFromCords({
+                updateHtml.clearChunk(getChunkFromCords({
                     x: col,
-                    y: row,
-                }).animate({backgroundColor: 'rgba(238, 228, 218, 0.35)'},250)
+                    y: row
+                }))
             }
         }
     }
@@ -881,6 +880,14 @@ function getScreenType() {
         } else {
             return 'bigScreen'
         }
+    }
+}
+
+function getScreenOrientation() {
+    if ($(window).height() > $(window).width()) {
+        return "portrait"
+    } else {
+        return "landscape"
     }
 }
 
