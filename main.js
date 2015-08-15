@@ -324,11 +324,10 @@ function updateDragbox(slot) {
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         if ((getScreenOrientation() == "landscape") && (getScreenType() == "smallScreen")) {
             centerCursor.left = $(".drag-container").width() + sizes.chunk() * 2;
-            centerCursor.left += containerPieceWDiff //if (containerPieceWDiff > 0) 
+            centerCursor.left += containerPieceWDiff;
         } else {
             centerCursor.bottom = (getScreenType() == 'smallScreen') ? -sizes.chunk() * 2 : 0;
-            console.log(containerPieceHDiff)
-            centerCursor.bottom -= containerPieceHDiff; //if (containerPieceHDiff > 0) 
+            centerCursor.bottom -= containerPieceHDiff;
         }
     }
 
@@ -572,7 +571,9 @@ function checkGameOver() {
 
 function restart() {
     // Hide the gameover overlay
-    $(".game-over").addClass("hidden")
+    $(".overlay").each(function () {
+        $(this).addClass("hidden")
+    })
     isGameOver = false;
 
     // reset score
@@ -762,9 +763,11 @@ function init() {
         load()
     }
 
-    $("#again").click(restart);
-    $("#keep-playing").click(function () {
-        $(".high-score").addClass("hidden")
+    $(".again").click(restart);
+    $(".keep-playing").click(function () {
+        $(".overlay").each(function () {
+            $(this).addClass("hidden")
+        })
     });
 
     $(window).resize(function () {

@@ -246,6 +246,10 @@ body {
     cursor: pointer;
 }
 
+.pause .keep-playing {
+    margin-top: 35%;
+}
+
 
 /*Pieces spawn area*/
 
