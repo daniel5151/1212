@@ -1,5 +1,6 @@
 body {
     font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+    color: rgb(119, 110, 101);
     margin: auto;
     background: #FAF8EF;
     -webkit-touch-callout: none;
@@ -12,7 +13,9 @@ body {
     overflow-x: hidden;
 }
 
+
 /*Header*/
+
 .heading {
     width: 600px;
     height: 100px;
@@ -32,10 +35,10 @@ body {
     margin: 0;
     display: block;
     float: left;
-    color: rgb(119, 110, 101);
 }
 
 .scores-container {
+    margin-top:13px;
     float: right;
     text-align: right;
 }
@@ -77,90 +80,12 @@ body {
     content: "Top";
 }
 
+
 /*Playing Field*/
-#right {
-    margin-bottom: 100px;
-}
 
 #left {
     width: 600px;
     margin: auto;
-}
-
-.hidden {
-    display: none;
-}
-
-@keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-@-webkit-keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-@-o-keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-@-moz-keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
-.overlay {
-    width: 600px;
-    height: 600px;
-    position: absolute;
-    background-color: rgba(205, 193, 180, 0.6);
-    border-radius: 3%;
-    text-align: center;
-    top:200px;
-    
-    -webkit-animation-name: fadeIn;
-    -moz-animation-name: fadeIn;
-    -o-animation-name: fadeIn;
-    animation-name: fadeIn;
-    -webkit-animation-duration: 1s;
-    -moz-animation-duration: 1s;
-    -o-animation-duration: 1s;
-    animation-duration: 1s;
-}
-
-.game-over p {
-    color: rgb(119, 110, 101);
-    font-size: 60px;
-    font-weight: bold;
-    height: 60px;
-    line-height: 60px;
-    margin-top: 222px;
-}
-
-.high-score p {
-    color: rgb(119, 110, 101);
-    font-size: 60px;
-    font-weight: bold;
-    height: 60px;
-    line-height: 60px;
-    margin-top: 160px;
-}
-
-.high-score span {
-    color: rgb(119, 110, 101);
-    font-size: 30px;
-}
-
-.button {
-    display: inline-block;
-    background: rgb(119, 110, 101);
-    font-size: 20px;
-    border-radius: 5px;
-    padding: 0 20px;
-    text-decoration: none;
-    color: #f9f6f2;
-    height: 40px;
-    line-height: 40px;
-    cursor: pointer;
 }
 
 .box {
@@ -199,7 +124,6 @@ body {
     float: left;
     margin-right: 2px;
     margin-bottom: 2px;
-    
     animation-name: fadeIn;
     animation-duration: 1s;
     -webkit-animation-name: fadeIn;
@@ -213,6 +137,116 @@ body {
 .chunk:last-child {
     margin-right: 0;
 }
+
+/*Below Game*/
+
+.below-game {
+    width: 600px;
+    height: 50px;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 100px;
+}
+.below-game:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+/* Overlays */
+
+.hidden {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-o-keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.overlay {
+    width: 600px;
+    height: 600px;
+    position: absolute;
+    background-color: rgba(230, 217, 204, 0.71);
+    border-radius: 3%;
+    text-align: center;
+    top: 200px;
+    -webkit-animation-name: fadeIn;
+    -moz-animation-name: fadeIn;
+    -o-animation-name: fadeIn;
+    animation-name: fadeIn;
+    -webkit-animation-duration: 1s;
+    -moz-animation-duration: 1s;
+    -o-animation-duration: 1s;
+    animation-duration: 1s;
+}
+
+.game-over p {
+    font-size: 60px;
+    font-weight: bold;
+    height: 60px;
+    line-height: 60px;
+    margin-top: 222px;
+}
+
+.high-score p {
+    font-size: 60px;
+    font-weight: bold;
+    height: 60px;
+    line-height: 60px;
+    margin-top: 160px;
+}
+
+.high-score span {
+    font-size: 30px;
+}
+
+.button {
+    display: inline-block;
+    background: rgb(119, 110, 101);
+    font-size: 20px;
+    border-radius: 5px;
+    padding: 0 20px;
+    text-decoration: none;
+    color: #f9f6f2;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+}
+
+
 /*Pieces spawn area*/
 
 .pieces-container {
@@ -234,29 +268,30 @@ body {
     border-radius: 10%;
     background: rgba(238, 228, 218, 0.35);
 }
-/*Piece generics*/
-.placeholder {
-    background: inherit !important;
-}
-
-/*Keyframes generated on the fly based on colors of pieces*/
-.anti-chunk {
-    opacity: 50% !important;
-    background: rgba(0, 0, 0, 0.5) !important;
-    
-    -webkit-animation: anti 2s;
-    -moz-animation: anti 2s;
-    -o-animation: anti 2s;
-    animation: anti 2s;
-    -webkit-animation-iteration-count:infinite;
-    -moz-animation-iteration-count:infinite;
-    -o-animation-iteration-count:infinite;
-    animation-iteration-count:infinite;
-}
 
 .drag-container {
     height: 100%;
     width: 100%;
+}
+
+/*Piece generics*/
+
+.placeholder {
+    background: inherit !important;
+}
+
+.anti-chunk {
+    opacity: 50% !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    /*Keyframes for anti animation are generated on the fly based on colors of pieces*/
+    -webkit-animation: anti 2s;
+    -moz-animation: anti 2s;
+    -o-animation: anti 2s;
+    animation: anti 2s;
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
 }
 
 .piece {
@@ -270,7 +305,9 @@ body {
     -o-transform: translateY(-50%);
 }
 
+
 /*Small Screens Vertical*/
+
 @media screen and (max-width: 600px) and (orientation: portrait) {
     .heading {
         width: 300px;
@@ -278,16 +315,13 @@ body {
         margin: auto;
         margin-top: 50px;
     }
-
     .title {
         font-size: 40px;
         font-weight: bold;
         margin: 0;
         display: block;
         float: left;
-        color: rgb(119, 110, 101);
     }
-
     .score,
     .top {
         position: relative;
@@ -303,7 +337,6 @@ body {
         margin-top: 4px;
         text-align: center;
     }
-
     .score:after,
     .top:after {
         position: absolute;
@@ -316,16 +349,10 @@ body {
         text-align: center;
         color: #eee4da;
     }
-    
     #left {
         width: 300px;
         margin: auto;
     }
-    
-    #right {
-        margin-bottom: 50px;
-    }
-    
     .overlay {
         width: 300px;
         height: 300px;
@@ -335,39 +362,30 @@ body {
         text-align: center;
         top: 100px;
         margin: auto;
-        
         transition: opacity 1s;
         -webkit-transition: opacity 1s;
     }
-
     .game-over p {
-        color: rgb(119, 110, 101);
         font-size: 30px;
         font-weight: bold;
         height: 30px;
         line-height: 30px;
         margin-top: 111px;
     }
-    
     .high-score p {
-        color: rgb(119, 110, 101);
         font-size: 30px;
         font-weight: bold;
         height: 30px;
         line-height: 30px;
         margin-top: 80px;
     }
-
     .high-score span {
-        color: rgb(119, 110, 101);
         font-size: 15px;
     }
-    
     .box {
         position: relative;
         width: 300px;
         /* desired width */
-        
         margin: auto;
     }
     .grid-container {
@@ -401,8 +419,18 @@ body {
         background: #CDC1B4;
         border-radius: 10px;
     }
+    .below-game {
+        width: 300px;
+        height: 25px;
+        margin: auto;
+        margin-top: 10px;
+        margin-bottom: 50px;
+    }
 }
+
+
 /*Big Screens Horizontal*/
+
 @media screen and (min-width: 820px) and (orientation: landscape) {
     .heading {
         width: 820px;
@@ -410,8 +438,7 @@ body {
         margin: auto;
         margin-top: 100px;
     }
-    
-    #game-container {
+    .game-container {
         width: 820px;
         height: 600px;
         margin: auto;
@@ -423,9 +450,7 @@ body {
     #right {
         float: left;
         width: 220px;
-        margin-bottom: 100px;
     }
-    
     .box {
         position: relative;
         width: 600px;
@@ -450,8 +475,18 @@ body {
         border-radius: 10%;
         background: rgba(238, 228, 218, 0.35);
     }
+    .below-game {
+        width: 820px;
+        height: 50px;
+        margin: auto;
+        margin-top: 20px;
+        margin-bottom: 100px;
+    }
 }
+
+
 /*Small Screens Horizontal*/
+
 @media screen and (max-width: 820px) and (orientation: landscape) {
     .heading {
         width: 410px;
@@ -459,16 +494,13 @@ body {
         margin: auto;
         margin-top: 50px;
     }
-
     .title {
         font-size: 40px;
         font-weight: bold;
         margin: 0;
         display: block;
         float: left;
-        color: rgb(119, 110, 101);
     }
-
     .score,
     .top {
         position: relative;
@@ -484,7 +516,6 @@ body {
         margin-top: 4px;
         text-align: center;
     }
-
     .score:after,
     .top:after {
         position: absolute;
@@ -497,8 +528,7 @@ body {
         text-align: center;
         color: #eee4da;
     }
-    
-    #game-container {
+    .game-container {
         width: 410px;
         height: 300px;
         margin: auto;
@@ -510,9 +540,7 @@ body {
     #right {
         float: left;
         width: 110px;
-        margin-bottom: 50px;
     }
-    
     .overlay {
         width: 300px;
         height: 300px;
@@ -521,39 +549,30 @@ body {
         border-radius: 3%;
         text-align: center;
         top: 100px;
-        
         transition: opacity 1s;
         -webkit-transition: opacity 1s;
     }
-
     .game-over p {
-        color: rgb(119, 110, 101);
         font-size: 30px;
         font-weight: bold;
         height: 30px;
         line-height: 30px;
         margin-top: 111px;
     }
-    
     .high-score p {
-        color: rgb(119, 110, 101);
         font-size: 30px;
         font-weight: bold;
         height: 30px;
         line-height: 30px;
         margin-top: 80px;
     }
-
     .high-score span {
-        color: rgb(119, 110, 101);
         font-size: 15px;
     }
-    
     .box {
         position: relative;
         width: 300px;
         /* desired width */
-        
         margin: auto;
     }
     .grid-container {
@@ -593,5 +612,13 @@ body {
         margin-left: 5px;
         border-radius: 10%;
         background: rgba(238, 228, 218, 0.35);
+    }
+    
+    .below-game {
+        width: 410px;
+        height: 25px;
+        margin: auto;
+        margin-top: 10px;
+        margin-bottom: 50px;
     }
 }
