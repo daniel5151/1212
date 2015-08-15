@@ -239,50 +239,19 @@ body {
     background: inherit !important;
 }
 
-@keyframes anti {
-    0%   {background: red;}
-    20%  {background: orange;}
-    40%  {background: yellow;}
-    60%  {background: blue;}
-    80%  {background: green;}
-    100% {background: red;}
-}
-@-webkit-keyframes anti {
-    0%   {background: red;}
-    20%  {background: orange;}
-    40%  {background: yellow;}
-    60%  {background: blue;}
-    80%  {background: green;}
-    100% {background: red;}
-}
-@-moz-keyframes anti {
-    0%   {background: red;}
-    20%  {background: orange;}
-    40%  {background: yellow;}
-    60%  {background: blue;}
-    80%  {background: green;}
-    100% {background: red;}
-}
-@-o-keyframes anti {
-    0%   {background: red;}
-    20%  {background: orange;}
-    40%  {background: yellow;}
-    60%  {background: blue;}
-    80%  {background: green;}
-    100% {background: red;}
-}
+/*Keyframes generated on the fly based on colors of pieces*/
 .anti-chunk {
     opacity: 50% !important;
     background: rgba(0, 0, 0, 0.5) !important;
     
-    animation: anti 2s;
-    animation-iteration-count:infinite;
     -webkit-animation: anti 2s;
-    -webkit-animation-iteration-count:infinite;
     -moz-animation: anti 2s;
-    -moz-animation-iteration-count:infinite;
     -o-animation: anti 2s;
+    animation: anti 2s;
+    -webkit-animation-iteration-count:infinite;
+    -moz-animation-iteration-count:infinite;
     -o-animation-iteration-count:infinite;
+    animation-iteration-count:infinite;
 }
 
 .drag-container {

@@ -185,6 +185,32 @@ function initCSS() {
             .html(pieceCSS)
             .appendTo("head");
     };
+    
+    // Anti CSS
+    var numPieces = countProperties(Pieces);
+    var keyPercent = 0;
+    var keyPercentIterator = Math.ceil(100 / numPieces)
+    var keyframes = [];
+    for (var piece in Pieces) {
+        keyframes.push(keyPercent+"% {background: "+Pieces[piece].color+";}")
+        keyPercent += keyPercentIterator;
+    }
+    
+    
+    var keyframesCSS = keyframes.join("\n")
+        
+    var antiCSS = String.format("\
+        @keyframes anti {\n{0}}\
+        @-webkit-keyframes anti {\n{0}}\
+        @-moz-keyframes anti {\n{0}}\
+        @-o-keyframes anti {\n{0}}\
+        ", keyframesCSS);
+
+    $("<style>")
+        .prop("type", "text/css")
+        .prop("id", "anti_CSS")
+        .html(antiCSS)
+        .appendTo("head");
 }
 
 function initDragboxes() {
@@ -289,8 +315,7 @@ function updateDragbox(slot) {
     
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         if ((getScreenOrientation() == "landscape") && (getScreenType() == "smallScreen")) {
-            console.log(sizes.chunk() * 2)
-            centerCursor.left = $(".drag-container").width() + sizes.chunk() * 2; // the hell?
+            centerCursor.left = $(".drag-container").width() + sizes.chunk() * 2;
         } else {
             centerCursor.bottom = (getScreenType() == 'smallScreen') ? -sizes.chunk() * 2 : 0;
         }
@@ -829,6 +854,17 @@ function load() {
 }
 
 // General Utilities
+function countProperties(obj) {
+    var count = 0;
+
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            ++count;
+    }
+
+    return count;
+}
+
 function pickRandomProperty(obj) {
     var result;
     var count = 0;
