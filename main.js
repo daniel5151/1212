@@ -324,10 +324,10 @@ function updateDragbox(slot) {
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         if ((getScreenOrientation() == "landscape") && (getScreenType() == "smallScreen")) {
             centerCursor.left = $(".drag-container").width() + sizes.chunk() * 2;
-            centerCursor.left += containerPieceWDiff;
+            if (containerPieceWDiff > 0) centerCursor.left += containerPieceWDiff;
         } else {
             centerCursor.bottom = (getScreenType() == 'smallScreen') ? -sizes.chunk() * 2 : 0;
-            centerCursor.bottom -= containerPieceHDiff;
+            if (containerPieceHDiff > 0) centerCursor.bottom -= containerPieceHDiff;
         }
     }
 
