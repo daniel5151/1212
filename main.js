@@ -769,6 +769,9 @@ function init() {
             $(this).addClass("hidden")
         })
     });
+    $(".pause").click(function () {
+        $(".paused").removeClass("hidden");
+    });
 
     $(window).resize(function () {
         updateDragbox(1)

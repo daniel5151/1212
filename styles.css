@@ -38,14 +38,13 @@ body {
 }
 
 .scores-container {
-    margin-top:13px;
+    height: 100%;
     float: right;
     text-align: right;
 }
 
 .score,
 .top {
-    position: relative;
     display: inline-block;
     background: #bbada0;
     padding: 15px 25px;
@@ -57,6 +56,8 @@ body {
     color: white;
     margin-top: 8px;
     text-align: center;
+    position: relative;
+    top:13px;
 }
 
 .score:after,
@@ -80,6 +81,21 @@ body {
     content: "Top";
 }
 
+.pause {
+    display: inline-block;
+    background: #bbada0;
+    font-size: 25px;
+    line-height: 25px;
+    padding: 15px 25px;
+    height: 25px;
+    border-radius: 3px;
+    color: white;
+    margin-top: 3px;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    top: 2px;
+}
 
 /*Playing Field*/
 
@@ -246,7 +262,7 @@ body {
     cursor: pointer;
 }
 
-.pause .keep-playing {
+.paused .keep-playing {
     margin-top: 35%;
 }
 
@@ -352,6 +368,21 @@ body {
         line-height: 6.5px;
         text-align: center;
         color: #eee4da;
+    }
+    .pause {
+        display: inline-block;
+        background: #bbada0;
+        font-size: 12.5px;
+        line-height: 12.5px;
+        padding: 7.5px 12.5px;
+        height: 12.5px;
+        border-radius: 1.5px;
+        color: white;
+        margin-top: 4px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        top: 7px;
     }
     #left {
         width: 300px;
@@ -531,6 +562,21 @@ body {
         line-height: 6.5px;
         text-align: center;
         color: #eee4da;
+    }
+    .pause {
+        display: inline-block;
+        background: #bbada0;
+        font-size: 12.5px;
+        line-height: 12.5px;
+        padding: 7.5px 12.5px;
+        height: 12.5px;
+        border-radius: 1.5px;
+        color: white;
+        margin-top: 4px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        top: 7px;
     }
     .game-container {
         width: 410px;
