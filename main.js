@@ -464,7 +464,7 @@ var updateHtml = {
             .animateNumber({
                 number: topScore + dScore
             }, 200);
-        if (!topScoreNotificationFired && dScore!==0) {
+        if (!topScoreNotificationFired && dScore!==0 && !isGameOver) {
             $(".high-score").removeClass("hidden")
             topScoreNotificationFired = true;
         }
@@ -575,7 +575,10 @@ function restart() {
         $(this).addClass("hidden")
     })
     isGameOver = false;
-
+    
+    // re-enable dragging
+    $(".drag-container").draggable('enable')
+    
     // reset score
     score = 0
     updateHtml.score(-score)
@@ -768,9 +771,11 @@ function init() {
         $(".overlay").each(function () {
             $(this).addClass("hidden")
         })
+        $(".drag-container").draggable('enable')
     });
     $(".pause").click(function () {
         $(".paused").removeClass("hidden");
+        $(".drag-container").draggable('disable')
     });
 
     $(window).resize(function () {
