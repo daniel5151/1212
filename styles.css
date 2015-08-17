@@ -325,6 +325,63 @@ body {
 }
 
 
+
+/*Big Screens Horizontal*/
+
+@media screen and (min-width: 820px) and (orientation: landscape) {
+    .heading {
+        width: 820px;
+        height: 100px;
+        margin: auto;
+        margin-top: 100px;
+    }
+    .game-container {
+        width: 820px;
+        height: 600px;
+        margin: auto;
+    }
+    #left {
+        float: left;
+        width: 600px;
+    }
+    #right {
+        float: left;
+        width: 220px;
+    }
+    .box {
+        position: relative;
+        width: 600px;
+        margin: auto;
+        float: right;
+    }
+    .pieces-container {
+        width: 200px;
+        height: 600px;
+        margin: auto;
+        background: #CDC1B4;
+        border-radius: 20px;
+        float: left;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    .slot {
+        width: 90%;
+        height: 30%;
+        margin-top: 15px;
+        margin-left: 10px;
+        border-radius: 10%;
+        background: rgba(238, 228, 218, 0.35);
+    }
+    .below-game {
+        width: 820px;
+        height: 50px;
+        margin: auto;
+        margin-top: 20px;
+        margin-bottom: 100px;
+    }
+}
+
+
 /*Small Screens Vertical*/
 
 @media screen and (max-width: 600px) and (orientation: portrait) {
@@ -465,63 +522,6 @@ body {
         margin-bottom: 50px;
     }
 }
-
-
-/*Big Screens Horizontal*/
-
-@media screen and (min-width: 820px) and (orientation: landscape) {
-    .heading {
-        width: 820px;
-        height: 100px;
-        margin: auto;
-        margin-top: 100px;
-    }
-    .game-container {
-        width: 820px;
-        height: 600px;
-        margin: auto;
-    }
-    #left {
-        float: left;
-        width: 600px;
-    }
-    #right {
-        float: left;
-        width: 220px;
-    }
-    .box {
-        position: relative;
-        width: 600px;
-        margin: auto;
-        float: right;
-    }
-    .pieces-container {
-        width: 200px;
-        height: 600px;
-        margin: auto;
-        background: #CDC1B4;
-        border-radius: 20px;
-        float: left;
-        margin-left: 20px;
-        margin-right: 20px;
-    }
-    .slot {
-        width: 90%;
-        height: 30%;
-        margin-top: 15px;
-        margin-left: 10px;
-        border-radius: 10%;
-        background: rgba(238, 228, 218, 0.35);
-    }
-    .below-game {
-        width: 820px;
-        height: 50px;
-        margin: auto;
-        margin-top: 20px;
-        margin-bottom: 100px;
-    }
-}
-
 
 /*Small Screens Horizontal*/
 
