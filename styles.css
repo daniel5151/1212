@@ -93,6 +93,7 @@ body {
     color: white;
     text-align: center;
     position: relative;
+    cursor: pointer;
     vertical-align: bottom;
 }
 
