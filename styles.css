@@ -30,7 +30,7 @@ body {
 }
 
 .title {
-    font-size: 82px;
+    font-size: 81px;
     font-weight: bold;
     margin: 0;
     display: block;
@@ -323,7 +323,6 @@ body {
     -moz-transform: translateY(-50%);
     -o-transform: translateY(-50%);
 }
-
 
 
 /*Big Screens Horizontal*/
