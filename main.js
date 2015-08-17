@@ -466,6 +466,7 @@ var updateHtml = {
             }, 200);
         if (!topScoreNotificationFired && dScore!==0 && !isGameOver) {
             $(".high-score").removeClass("hidden")
+            $(".drag-container").draggable('disable')
             topScoreNotificationFired = true;
         }
     },
