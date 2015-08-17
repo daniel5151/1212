@@ -1,20 +1,18 @@
 CACHE MANIFEST
 
-#version 1.0 8-13-2015
-
 CACHE:
-
-#images
-
-
-#internal HTML documents
-
 
 #style sheets
 styles.css
+css/font-awesome.min.css
 
-#style sheet images
-
+#fonts
+fonts/fontawesome-webfont.eot
+fonts/fontawesome-webfont.svg
+fonts/fontawesome-webfont.ttf
+fonts/fontawesome-webfont.woff
+fonts/fontawesome-webfont.woff2
+fonts/FontAwesome.otf
 
 #javascript files
 js/jquery-1.11.3.min.js
