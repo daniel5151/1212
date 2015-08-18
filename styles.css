@@ -12,7 +12,9 @@ body {
     overflow-y: visible;
     overflow-x: hidden;
 }
-
+a {
+    color: #776e65;
+}
 
 /*Header*/
 
@@ -83,7 +85,7 @@ body {
 
 .pause {
     display: inline-block;
-    background: #bbada0;
+    background: rgb(119, 110, 101);
     padding: 15px 15px;
     font-size: 25px;
     height: 25px;
@@ -167,6 +169,10 @@ body {
     content: "";
     display: block;
     clear: both;
+}
+.below-game p {
+    font-size: 18px;
+    line-height: 27.5px;
 }
 
 /* Overlays */
@@ -432,7 +438,7 @@ body {
     }
     .pause {
         display: inline-block;
-        background: #bbada0;
+        background: rgb(119, 110, 101);
         font-size: 12.5px;
         line-height: 12.5px;
         padding: 7.5px 5px;
@@ -521,6 +527,10 @@ body {
         margin-top: 10px;
         margin-bottom: 50px;
     }
+    .below-game p {
+        font-size: 15px;
+        line-height: 22.5px;
+    }
 }
 
 /*Small Screens Horizontal*/
@@ -573,7 +583,7 @@ body {
     }
     .pause {
         display: inline-block;
-        background: #bbada0;
+        background: rgb(119, 110, 101);
         font-size: 12.5px;
         line-height: 12.5px;
         padding: 7.5px 5px;
@@ -677,5 +687,9 @@ body {
         margin: auto;
         margin-top: 10px;
         margin-bottom: 50px;
+    }
+    .below-game p {
+        font-size: 15px;
+        line-height: 22.5px;
     }
 }
