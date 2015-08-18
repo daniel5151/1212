@@ -175,6 +175,19 @@ a {
     line-height: 27.5px;
 }
 
+.tweet-button, .facebook-button {
+    display: inline-block;
+    background: rgb(119, 110, 101);
+    font-size: 20px;
+    border-radius: 5px;
+    padding: 0 20px;
+    text-decoration: none;
+    color: #f9f6f2;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+}
+
 /* Overlays */
 
 .hidden {
