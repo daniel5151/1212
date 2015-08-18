@@ -405,21 +405,21 @@ a {
         float: left;
     }
     .scores-container {
-        height: 27.5px;
+        height: 50px;
         float: right;
         text-align: right;
-        margin-top: 10px;
+        margin-top: 7.5px;
     }
     .score,
     .top {
         display: inline-block;
         background: #bbada0;
-        padding: 7.5px 12.5px;
-        font-size: 12.5px;
-        height: 12.5px;
-        line-height: 23.5px;
+        padding: 10px 10px;
+        font-size: 15px;
+        height: 15px;
+        line-height: 25px;
         font-weight: bold;
-        border-radius: 1.5px;
+        border-radius: 3px;
         color: white;
         text-align: center;
         vertical-align: bottom;
@@ -431,19 +431,19 @@ a {
         top: 5px;
         left: 0;
         text-transform: uppercase;
-        font-size: 6.5px;
-        line-height: 6.5px;
+        font-size: 10px;
+        line-height: 10px;
         text-align: center;
         color: #eee4da;
     }
     .pause {
         display: inline-block;
         background: rgb(119, 110, 101);
-        font-size: 12.5px;
-        line-height: 12.5px;
-        padding: 7.5px 5px;
-        height: 12.5px;
-        border-radius: 1.5px;
+        font-size: 15px;
+        line-height: 15px;
+        padding: 10px 10px;
+        height: 15px;
+        border-radius: 3px;
         color: white;
         font-weight: bold;
         text-align: center;
@@ -550,21 +550,21 @@ a {
         float: left;
     }
     .scores-container {
-        height: 27.5px;
+        height: 50px;
         float: right;
         text-align: right;
-        margin-top: 10px;
+        margin-top: 7.5px;
     }
     .score,
     .top {
         display: inline-block;
         background: #bbada0;
-        padding: 7.5px 12.5px;
-        font-size: 12.5px;
-        height: 12.5px;
-        line-height: 23.5px;
+        padding: 10px 10px;
+        font-size: 15px;
+        height: 15px;
+        line-height: 25px;
         font-weight: bold;
-        border-radius: 1.5px;
+        border-radius: 3px;
         color: white;
         text-align: center;
         vertical-align: bottom;
@@ -576,19 +576,19 @@ a {
         top: 5px;
         left: 0;
         text-transform: uppercase;
-        font-size: 6.5px;
-        line-height: 6.5px;
+        font-size: 10px;
+        line-height: 10px;
         text-align: center;
         color: #eee4da;
     }
     .pause {
         display: inline-block;
         background: rgb(119, 110, 101);
-        font-size: 12.5px;
-        line-height: 12.5px;
-        padding: 7.5px 5px;
-        height: 12.5px;
-        border-radius: 1.5px;
+        font-size: 15px;
+        line-height: 15px;
+        padding: 10px 10px;
+        height: 15px;
+        border-radius: 3px;
         color: white;
         font-weight: bold;
         text-align: center;
