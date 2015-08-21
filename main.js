@@ -132,98 +132,96 @@ var currentPieces = {
 var grid = [];
 
 // INIT FUNCTIONS
-function initDynamicSizes() {
-    sizes.bigScreen.SChunk = sizes.SScale * sizes.bigScreen.chunk
-    sizes.smallScreen.SChunk = sizes.SScale * sizes.smallScreen.chunk
-    sizes.bigScreen.BChunk = sizes.BScale * sizes.bigScreen.chunk
-    sizes.smallScreen.BChunk = sizes.BScale * sizes.smallScreen.chunk
-}
+var init = {
+    DynamicSizes: function () {
+        sizes.bigScreen.SChunk = sizes.SScale * sizes.bigScreen.chunk
+        sizes.smallScreen.SChunk = sizes.SScale * sizes.smallScreen.chunk
+        sizes.bigScreen.BChunk = sizes.BScale * sizes.bigScreen.chunk
+        sizes.smallScreen.BChunk = sizes.BScale * sizes.smallScreen.chunk
+    },
+    GridArray: function (size, random) {
+        // Empty array of 0's
+        for (var xs = 0; xs < size[0]; xs++) {
+            grid[xs] = Array.apply(null, new Array(size[1])).map(Number.prototype.valueOf, 0);
+        }
 
-function initGrid(size, random) {
-    // Empty array of 0's
-    for (var xs = 0; xs < size[0]; xs++) {
-        grid[xs] = Array.apply(null, new Array(size[1])).map(Number.prototype.valueOf, 0);
-    }
-
-    // Randomize it maybe?
-    if (random) {
-        for (var y = 0; y < grid.length; y++) {
-            for (var x = 0; x < grid[y].length; x++) {
-                grid[y][x] = getRandomInt(0, 1)
+        // Randomize it maybe?
+        if (random) {
+            for (var y = 0; y < grid.length; y++) {
+                for (var x = 0; x < grid[y].length; x++) {
+                    grid[y][x] = getRandomInt(0, 1)
+                }
             }
         }
-    }
-}
+    },
+    GridHtml: function () {
+        // Just for readability
+        var htmlRow = "<div class='grid-row'>";
+        var htmlChunk = "<div class='chunk'></div>";
 
-function initGridHtml() {
-    // Just for readability
-    var htmlRow = "<div class='grid-row'>";
-    var htmlChunk = "<div class='chunk'></div>";
-
-    for (var row = 0; row < sizes.grid[1]; row++) {
-        $('.grid-container')
-            .append(htmlRow)
-        for (var chunk = 0; chunk < sizes.grid[0]; chunk++) {
-            $('.grid-container .grid-row:last-child')
-                .append(htmlChunk)
+        for (var row = 0; row < sizes.grid[1]; row++) {
+            $('.grid-container')
+                .append(htmlRow)
+            for (var chunk = 0; chunk < sizes.grid[0]; chunk++) {
+                $('.grid-container .grid-row:last-child')
+                    .append(htmlChunk)
+            }
         }
-    }
-}
+    },
+    CSS: function () {
+        // Piece Color CSS
+        for (var piece in Pieces) {
+            var color = Pieces[piece].color;
+            var pieceCSS = String.format("\
+                .{0} .chunk {\
+                    background: {1};\
+                }", piece, color);
 
-function initCSS() {
-    // Piece Color CSS
-    for (var piece in Pieces) {
-        var color = Pieces[piece].color;
-        var pieceCSS = String.format("\
-            .{0} .chunk {\
-                background: {1};\
-            }", piece, color);
+            $("<style>")
+                .prop("type", "text/css")
+                .prop("id", piece + "_CSS")
+                .html(pieceCSS)
+                .appendTo("head");
+        };
+
+        // Anti CSS
+        var numPieces = countProperties(Pieces);
+        var keyPercent = 0;
+        var keyPercentIterator = Math.ceil(100 / numPieces)
+        var keyframes = [];
+        for (var piece in Pieces) {
+            keyframes.push(keyPercent + "% {background: " + Pieces[piece].color + ";}")
+            keyPercent += keyPercentIterator;
+        }
+
+
+        var keyframesCSS = keyframes.join("\n")
+
+        var antiCSS = String.format("\
+            @keyframes anti {\n{0}}\
+            @-webkit-keyframes anti {\n{0}}\
+            @-moz-keyframes anti {\n{0}}\
+            @-o-keyframes anti {\n{0}}\
+            ", keyframesCSS);
 
         $("<style>")
             .prop("type", "text/css")
-            .prop("id", piece + "_CSS")
-            .html(pieceCSS)
+            .prop("id", "anti_CSS")
+            .html(antiCSS)
             .appendTo("head");
-    };
-
-    // Anti CSS
-    var numPieces = countProperties(Pieces);
-    var keyPercent = 0;
-    var keyPercentIterator = Math.ceil(100 / numPieces)
-    var keyframes = [];
-    for (var piece in Pieces) {
-        keyframes.push(keyPercent + "% {background: " + Pieces[piece].color + ";}")
-        keyPercent += keyPercentIterator;
-    }
-
-
-    var keyframesCSS = keyframes.join("\n")
-
-    var antiCSS = String.format("\
-        @keyframes anti {\n{0}}\
-        @-webkit-keyframes anti {\n{0}}\
-        @-moz-keyframes anti {\n{0}}\
-        @-o-keyframes anti {\n{0}}\
-        ", keyframesCSS);
-
-    $("<style>")
-        .prop("type", "text/css")
-        .prop("id", "anti_CSS")
-        .html(antiCSS)
-        .appendTo("head");
-}
-
-function initDragboxes() {
-    $(".drag-container").each(function () {
-        $(this).draggable({
-            start: pickUpPiece,
-            revert: dropPiece,
-            revertDuration: 250,
-            scroll: false
+    },
+    Dragboxes: function () {
+        $(".drag-container").each(function () {
+            $(this).draggable({
+                start: pickUpPiece,
+                revert: dropPiece,
+                revertDuration: 250,
+                scroll: false
+            });
+            var currSlot = $(this).parent().attr('id').match(/\d+/)[0]
+            updateDragbox(currSlot)
         });
-        var currSlot = $(this).parent().attr('id').match(/\d+/)[0]
-        updateDragbox(currSlot)
-    });
+    }
 }
 
 // PIECE MANIPULATION FUNCTIONS
@@ -590,7 +588,7 @@ function restart() {
     topScoreNotificationFired = false;
 
     // reinitialize blank grid
-    initGrid(sizes.grid)
+    init.GridArray(sizes.grid)
 
     // color existing grid blank
     updateHtml.grid()
@@ -754,12 +752,12 @@ function dropPiece() {
 
 // FIRSTRUN MAIN FUNCTION
 window.requestAnimationFrame(function () {
-    initDynamicSizes();
-    initGridHtml()
-    initCSS();
-    initDragboxes();
+    init.DynamicSizes();
+    init.GridHtml()
+    init.CSS();
+    init.Dragboxes();
 
-    initGrid(sizes.grid);
+    init.GridArray(sizes.grid);
 
     if (!localStorage.getItem('score')) {
         Roll();
