@@ -2,18 +2,15 @@
 var sizes = {
     bigScreen: {
         chunk: 46,
-        BChunk: 'generateMeBruh',
         SChunk: 'generateMeBruh',
         spacing: 2
     },
     smallScreen: {
         chunk: 23,
-        BChunk: 'generateMeBruh',
         SChunk: 'generateMeBruh',
         spacing: 1
     },
     grid: 12,
-    BScale: 1,
     SScale: 0.6,
     chunk: function () {
         return sizes[getScreenType()].chunk
@@ -136,8 +133,6 @@ var init = {
     DynamicSizes: function () {
         sizes.bigScreen.SChunk = sizes.SScale * sizes.bigScreen.chunk
         sizes.smallScreen.SChunk = sizes.SScale * sizes.smallScreen.chunk
-        sizes.bigScreen.BChunk = sizes.BScale * sizes.bigScreen.chunk
-        sizes.smallScreen.BChunk = sizes.BScale * sizes.smallScreen.chunk
     },
     GridArray: function (size, random) {
         // Empty array of 0's
