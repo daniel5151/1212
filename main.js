@@ -214,6 +214,7 @@ var init = {
                 scroll: false
             });
             var currSlot = $(this).parent().attr('id').match(/\d+/)[0]
+            $(this).attr("slot", currSlot);
             updateDragbox(currSlot)
         });
     }
@@ -272,9 +273,9 @@ function changePieceSize(slot, growShrink) {
     if (currentPieces[slot] == 'EMPTY') {
         return false
     }
-
+    
     var piece = "#s" + slot + " .piece";
-    var newSize = (growShrink == 'shrink') ? sizes[getScreenType()].SChunk : sizes[getScreenType()].BChunk;
+    var newSize = (growShrink == 'shrink') ? sizes[getScreenType()].SChunk : sizes[getScreenType()].chunk;
     var spacing = sizes.spacing();
 
     $(piece).find('.chunk')
@@ -608,7 +609,7 @@ function pickUpPiece() {
     // 'this' is actually $(".drag-container")
     // Why? Good question. JavaScript, amirite?
 
-    var slot = $(this).parent().attr('id').match(/\d+/)[0]
+    var slot = $(this).attr("slot")
     changePieceSize(slot, 'grow')
 }
 
