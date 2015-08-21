@@ -183,10 +183,10 @@ var init = {
         var numPieces = countProperties(Pieces);
         var keyPercent = 0;
         var keyPercentIterator = Math.ceil(100 / numPieces);
-        
+
         var keyframes = [];
         var textKeyframes = [];
-        
+
         for (var piece in Pieces) {
             keyframes.push(keyPercent + "% {background: " + Pieces[piece].color + ";}");
             textKeyframes.push(keyPercent + "% {color: " + Pieces[piece].color + ";}");
@@ -206,7 +206,7 @@ var init = {
             @-webkit-keyframes anti-text {\n{1}}\
             @-moz-keyframes anti-text {\n{1}}\
             @-o-keyframes anti-text {\n{1}}\
-            ", keyframesCSS,textKeyFramesCSS);
+            ", keyframesCSS, textKeyFramesCSS);
 
         $("<style>")
             .prop("type", "text/css")
@@ -282,7 +282,7 @@ function changePieceSize(slot, growShrink) {
     if (currentPieces[slot] == 'EMPTY') {
         return false
     }
-    
+
     var piece = "#s" + slot + " .piece";
     var newSize = (growShrink == 'shrink') ? sizes[getScreenType()].SChunk : sizes[getScreenType()].chunk;
     var spacing = sizes.spacing();
@@ -339,104 +339,7 @@ function updateDragbox(slot) {
     changePieceSize(slot, 'shrink')
 }
 
-// GAME MECHANICS
-function returnPieceIfValidDrop(drag_container) {
-    var slot = $(drag_container).attr("slot");
-    var layout = currentPieces[slot].layout
-
-    // We want to determine where in the grid the user wanted to place his piece
-    // We do this by a relatively simple process of converting the offsets
-    // between the top-left chunk in the piece and the top left chunk on the grid
-    // (the 0,0 chunk)
-    var topLeftPieceChunk = $(drag_container).find(".chunk").first();
-    var topLeftGridChunk = getChunkFromCords({
-        x: 0,
-        y: 0
-    });
-    var offset = getOffset(topLeftPieceChunk, topLeftGridChunk);
-    var cords = {
-        x: Math.round(offset.left / (sizes.chunk() + sizes.spacing())),
-        y: Math.round(offset.top / (sizes.chunk() + sizes.spacing()))
-    };
-
-    // localGrid is a grid localized to the are a piece wished to occupy
-    var localGrid = getLocalizedGrid(cords, currentPieces[slot].size)
-
-    // This loop checks to see if the local grid can support the piece being placed
-    var valid = true;
-    var antiChunkOnEmptySpace = 0;
-    for (var y = 0; y < localGrid.length; y++) {
-        for (var x = 0; x < localGrid[y].length; x++) {
-            if (!currentPieces[slot].anti) {
-                if (localGrid[y][x] !== 0 && layout[y][x] == 1) valid = false;
-            } else {
-                if (localGrid[y][x] == 2 && layout[y][x] == 1) valid = false;
-                if (localGrid[y][x] == 0 && layout[y][x] == 1) antiChunkOnEmptySpace += 1
-            }
-        }
-    }
-    if (antiChunkOnEmptySpace == currentPieces[slot].points) valid = false;
-
-    if (valid) {
-        // return the chunk to which the piece should gravitate
-        return {
-            cords: cords,
-            html: getChunkFromCords(cords)
-        };
-    } else {
-        return false;
-    }
-}
-
-function returnStartChunksForLnClear(cords, layout) {
-    var sx = cords.x;
-    var sy = cords.y;
-
-    var cleared = {
-        linesCleared: 0,
-        row: {},
-        col: {}
-    };
-    for (var y = 0; y < layout.length; y++) {
-        for (var x = 0; x < layout[y].length; x++) {
-            if (layout[y][x] == 1) {
-                // check column
-                var clearedCol = true;
-                for (var col = 0; col < grid[0].length; col++) {
-                    if (grid[col][sx + x] == 0) clearedCol = false;
-                }
-                if (clearedCol && (!cleared.col[sx + x])) {
-                    cleared.col[sx + x] = {
-                        x: sx + x,
-                        y: sy + y
-                    };
-                    cleared.linesCleared += 1
-                }
-
-                // check row
-                var clearedRow = true;
-                for (var row = 0; row < grid.length; row++) {
-                    if (grid[sy + y][row] == 0) clearedRow = false;
-                }
-                if (clearedRow && (!cleared.row[sy + y])) {
-                    cleared.row[sy + y] = {
-                        x: sx + x,
-                        y: sy + y
-                    }
-                    cleared.linesCleared += 1
-                }
-            }
-        }
-    }
-
-    if (jQuery.isEmptyObject(cleared.row) && jQuery.isEmptyObject(cleared.col)) {
-        return false;
-    } else {
-        return cleared
-    }
-}
-
-// HTML Update function -- MIGRATE EXISTING FUNCTIONS HERE
+// HTML Update function
 var updateHtml = {
     grid: function (colorMap) {
         for (var y = 0; y < grid.length; y++) {
@@ -538,6 +441,104 @@ var updateHtml = {
     }
 }
 
+// GAME LOGIC
+function returnPieceIfValidDrop(drag_container) {
+    var slot = $(drag_container).attr("slot");
+    var layout = currentPieces[slot].layout
+
+    // We want to determine where in the grid the user wanted to place his piece
+    // We do this by a relatively simple process of converting the offsets
+    // between the top-left chunk in the piece and the top left chunk on the grid
+    // (the 0,0 chunk)
+    var topLeftPieceChunk = $(drag_container).find(".chunk").first();
+    var topLeftGridChunk = getChunkFromCords({
+        x: 0,
+        y: 0
+    });
+    var offset = getOffset(topLeftPieceChunk, topLeftGridChunk);
+    var cords = {
+        x: Math.round(offset.left / (sizes.chunk() + sizes.spacing())),
+        y: Math.round(offset.top / (sizes.chunk() + sizes.spacing()))
+    };
+
+    // localGrid is a grid localized to the are a piece wished to occupy
+    var localGrid = getLocalizedGrid(cords, currentPieces[slot].size)
+
+    // This loop checks to see if the local grid can support the piece being placed
+    var valid = true;
+    var antiChunkOnEmptySpace = 0;
+    for (var y = 0; y < localGrid.length; y++) {
+        for (var x = 0; x < localGrid[y].length; x++) {
+            if (!currentPieces[slot].anti) {
+                if (localGrid[y][x] !== 0 && layout[y][x] == 1) valid = false;
+            } else {
+                if (localGrid[y][x] == 2 && layout[y][x] == 1) valid = false;
+                if (localGrid[y][x] == 0 && layout[y][x] == 1) antiChunkOnEmptySpace += 1
+            }
+        }
+    }
+    if (antiChunkOnEmptySpace == currentPieces[slot].points) valid = false;
+
+    if (valid) {
+        // return the chunk to which the piece should gravitate
+        return {
+            cords: cords,
+            html: getChunkFromCords(cords)
+        };
+    } else {
+        return false;
+    }
+}
+
+function returnStartChunksForLnClear(cords, layout) {
+    var sx = cords.x;
+    var sy = cords.y;
+
+    var cleared = {
+        linesCleared: 0,
+        row: {},
+        col: {}
+    };
+    for (var y = 0; y < layout.length; y++) {
+        for (var x = 0; x < layout[y].length; x++) {
+            if (layout[y][x] == 1) {
+                // check column
+                var clearedCol = true;
+                for (var col = 0; col < grid[0].length; col++) {
+                    if (grid[col][sx + x] == 0) clearedCol = false;
+                }
+                if (clearedCol && (!cleared.col[sx + x])) {
+                    cleared.col[sx + x] = {
+                        x: sx + x,
+                        y: sy + y
+                    };
+                    cleared.linesCleared += 1
+                }
+
+                // check row
+                var clearedRow = true;
+                for (var row = 0; row < grid.length; row++) {
+                    if (grid[sy + y][row] == 0) clearedRow = false;
+                }
+                if (clearedRow && (!cleared.row[sy + y])) {
+                    cleared.row[sy + y] = {
+                        x: sx + x,
+                        y: sy + y
+                    }
+                    cleared.linesCleared += 1
+                }
+            }
+        }
+    }
+
+    // based jquery auxillary functions
+    if (jQuery.isEmptyObject(cleared.row) && jQuery.isEmptyObject(cleared.col)) {
+        return false;
+    } else {
+        return cleared
+    }
+}
+
 function checkGameOver() {
     var validMoves = 0;
     for (var slot = 1; slot <= 3; slot++) {
@@ -575,6 +576,17 @@ function checkGameOver() {
     else return true
 }
 
+// GAME MECHANICS
+function Roll() {
+    removePiece(1)
+    removePiece(2)
+    removePiece(3)
+
+    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation(), randomBoolean(0.05))
+    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation(), randomBoolean(0.05))
+    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), randomBoolean(0.05))
+}
+
 function restart() {
     // Hide the gameover overlay
     $(".overlay").each(function () {
@@ -604,16 +616,7 @@ function restart() {
     save()
 }
 
-function Roll() {
-    removePiece(1)
-    removePiece(2)
-    removePiece(3)
-
-    spawnPiece(pickRandomProperty(Pieces), 1, getRandomRotation(), randomBoolean(0.05))
-    spawnPiece(pickRandomProperty(Pieces), 2, getRandomRotation(), randomBoolean(0.05))
-    spawnPiece(pickRandomProperty(Pieces), 3, getRandomRotation(), randomBoolean(0.05))
-}
-
+// USER INTERACTION
 function pickUpPiece() {
     changePieceSize($(this).attr("slot"), 'grow')
 }
@@ -625,9 +628,6 @@ function dropPiece() {
     var piece = returnPieceIfValidDrop(this)
 
     if (piece !== false) {
-        // update the grid visually and object
-        // WRITE DIS FUNCTION
-
         // Move the piece to it's final position
 
         // first, we convert relatively positioned container to absolutely 
@@ -791,6 +791,37 @@ window.requestAnimationFrame(function () {
     });
 });
 
+// saving and loading
+function save() {
+    localStorage.setItem('grid', JSON.stringify(grid));
+    localStorage.setItem('grid-colormap', JSON.stringify(genColorMap()));
+    localStorage.setItem('currentPieces', JSON.stringify(currentPieces));
+    localStorage.setItem('score', JSON.stringify(score));
+    localStorage.setItem('topScore', JSON.stringify(topScore));
+    localStorage.setItem('isGameOver', JSON.stringify(isGameOver));
+    localStorage.setItem('topScoreNotificationFired', JSON.stringify(topScoreNotificationFired));
+}
+
+function load() {
+    grid = JSON.parse(localStorage.getItem('grid'))
+
+    var colorMap = JSON.parse(localStorage.getItem('grid-colormap'))
+    updateHtml.grid(colorMap)
+
+    currentPieces = JSON.parse(localStorage.getItem('currentPieces'))
+    updateHtml.pieces();
+
+    score = JSON.parse(localStorage.getItem('score'));
+    updateHtml.score(0);
+
+    topScore = JSON.parse(localStorage.getItem('topScore'));
+    updateHtml.topScore(0);
+
+    isGameOver = JSON.parse(localStorage.getItem('isGameOver'))
+    if (isGameOver) $(".game-over").removeClass("hidden")
+
+    topScoreNotificationFired = JSON.parse(localStorage.getItem("topScoreNotificationFired"))
+}
 
 // Specialized Utilities
 function getOffset(elem1, elem2) {
@@ -843,38 +874,6 @@ function getLocalizedGrid(cords, size) {
         localGrid.push(t)
     }
     return localGrid;
-}
-
-// saving and loading
-function save() {
-    localStorage.setItem('grid', JSON.stringify(grid));
-    localStorage.setItem('grid-colormap', JSON.stringify(genColorMap()));
-    localStorage.setItem('currentPieces', JSON.stringify(currentPieces));
-    localStorage.setItem('score', JSON.stringify(score));
-    localStorage.setItem('topScore', JSON.stringify(topScore));
-    localStorage.setItem('isGameOver', JSON.stringify(isGameOver));
-    localStorage.setItem('topScoreNotificationFired', JSON.stringify(topScoreNotificationFired));
-}
-
-function load() {
-    grid = JSON.parse(localStorage.getItem('grid'))
-
-    var colorMap = JSON.parse(localStorage.getItem('grid-colormap'))
-    updateHtml.grid(colorMap)
-
-    currentPieces = JSON.parse(localStorage.getItem('currentPieces'))
-    updateHtml.pieces();
-
-    score = JSON.parse(localStorage.getItem('score'));
-    updateHtml.score(0);
-
-    topScore = JSON.parse(localStorage.getItem('topScore'));
-    updateHtml.topScore(0);
-
-    isGameOver = JSON.parse(localStorage.getItem('isGameOver'))
-    if (isGameOver) $(".game-over").removeClass("hidden")
-
-    topScoreNotificationFired = JSON.parse(localStorage.getItem("topScoreNotificationFired"))
 }
 
 // General Utilities
