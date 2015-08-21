@@ -332,7 +332,7 @@ function updateDragbox(slot) {
 
 // GAME MECHANICS
 function returnPieceIfValidDrop(drag_container) {
-    var slot = $(drag_container).parent().attr('id').match(/\d+/)[0];
+    var slot = $(drag_container).attr("slot");
     var layout = currentPieces[slot].layout
 
     // We want to determine where in the grid the user wanted to place his piece
@@ -606,18 +606,11 @@ function Roll() {
 }
 
 function pickUpPiece() {
-    // 'this' is actually $(".drag-container")
-    // Why? Good question. JavaScript, amirite?
-
-    var slot = $(this).attr("slot")
-    changePieceSize(slot, 'grow')
+    changePieceSize($(this).attr("slot"), 'grow')
 }
 
 function dropPiece() {
-    // 'this' is actually $(".drag-container")
-    // Why? Good question. JavaScript, amirite?
-
-    var slot = $(this).parent().attr('id').match(/\d+/)[0]
+    var slot = $(this).attr("slot")
     if (currentPieces[slot] == 'EMPTY') return true
 
     var piece = returnPieceIfValidDrop(this)
@@ -784,7 +777,7 @@ window.requestAnimationFrame(function () {
         updateDragbox(2)
         updateDragbox(3)
         $(".drag-container").each(function () {
-            changePieceSize($(this).parent().attr('id').match(/\d+/)[0], 'shrink')
+            changePieceSize($(this).attr("slot"), 'shrink')
         })
     });
 });
