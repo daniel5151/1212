@@ -182,22 +182,31 @@ var init = {
         // Anti CSS
         var numPieces = countProperties(Pieces);
         var keyPercent = 0;
-        var keyPercentIterator = Math.ceil(100 / numPieces)
+        var keyPercentIterator = Math.ceil(100 / numPieces);
+        
         var keyframes = [];
+        var textKeyframes = [];
+        
         for (var piece in Pieces) {
-            keyframes.push(keyPercent + "% {background: " + Pieces[piece].color + ";}")
+            keyframes.push(keyPercent + "% {background: " + Pieces[piece].color + ";}");
+            textKeyframes.push(keyPercent + "% {color: " + Pieces[piece].color + ";}");
             keyPercent += keyPercentIterator;
         }
 
-
-        var keyframesCSS = keyframes.join("\n")
+        var keyframesCSS = keyframes.join("\n");
+        var textKeyFramesCSS = textKeyframes.join("\n");
 
         var antiCSS = String.format("\
             @keyframes anti {\n{0}}\
             @-webkit-keyframes anti {\n{0}}\
             @-moz-keyframes anti {\n{0}}\
             @-o-keyframes anti {\n{0}}\
-            ", keyframesCSS);
+            \
+            @keyframes anti-text {\n{1}}\
+            @-webkit-keyframes anti-text {\n{1}}\
+            @-moz-keyframes anti-text {\n{1}}\
+            @-o-keyframes anti-text {\n{1}}\
+            ", keyframesCSS,textKeyFramesCSS);
 
         $("<style>")
             .prop("type", "text/css")
