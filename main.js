@@ -12,7 +12,7 @@ var sizes = {
         SChunk: 'generateMeBruh',
         spacing: 1
     },
-    grid: [12, 12],
+    grid: 12,
     BScale: 1,
     SScale: 0.6,
     chunk: function () {
@@ -141,8 +141,8 @@ var init = {
     },
     GridArray: function (size, random) {
         // Empty array of 0's
-        for (var xs = 0; xs < size[0]; xs++) {
-            grid[xs] = Array.apply(null, new Array(size[1])).map(Number.prototype.valueOf, 0);
+        for (var xs = 0; xs < size; xs++) {
+            grid[xs] = Array.apply(null, new Array(size)).map(Number.prototype.valueOf, 0);
         }
 
         // Randomize it maybe?
@@ -159,10 +159,10 @@ var init = {
         var htmlRow = "<div class='grid-row'>";
         var htmlChunk = "<div class='chunk'></div>";
 
-        for (var row = 0; row < sizes.grid[1]; row++) {
+        for (var row = 0; row < sizes.grid; row++) {
             $('.grid-container')
                 .append(htmlRow)
-            for (var chunk = 0; chunk < sizes.grid[0]; chunk++) {
+            for (var chunk = 0; chunk < sizes.grid; chunk++) {
                 $('.grid-container .grid-row:last-child')
                     .append(htmlChunk)
             }
@@ -836,7 +836,7 @@ function getLocalizedGrid(cords, size) {
     for (var y = cords.y; y < cords.y + size[1]; y++) {
         var t = []
         for (var x = cords.x; x < cords.x + size[0]; x++) {
-            if (x >= sizes.grid[0] || x < 0 || y >= sizes.grid[1] || y < 0) {
+            if (x >= sizes.grid || x < 0 || y >= sizes.grid || y < 0) {
                 t.push(2)
             } else {
                 t.push(grid[y][x])
