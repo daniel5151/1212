@@ -58,7 +58,7 @@ var Pieces = {
     ln6: {
         size: [6, 1],
         layout: [
-            [1, 1, 1, 1, 1,1]
+            [1, 1, 1, 1, 1, 1]
         ],
         points: 6,
         color: 'rgb(45, 52, 219)'
@@ -185,20 +185,20 @@ function initCSS() {
             .html(pieceCSS)
             .appendTo("head");
     };
-    
+
     // Anti CSS
     var numPieces = countProperties(Pieces);
     var keyPercent = 0;
     var keyPercentIterator = Math.ceil(100 / numPieces)
     var keyframes = [];
     for (var piece in Pieces) {
-        keyframes.push(keyPercent+"% {background: "+Pieces[piece].color+";}")
+        keyframes.push(keyPercent + "% {background: " + Pieces[piece].color + ";}")
         keyPercent += keyPercentIterator;
     }
-    
-    
+
+
     var keyframesCSS = keyframes.join("\n")
-        
+
     var antiCSS = String.format("\
         @keyframes anti {\n{0}}\
         @-webkit-keyframes anti {\n{0}}\
@@ -287,7 +287,7 @@ function changePieceSize(slot, growShrink) {
     $(piece).find('.chunk')
         .css('width', newSize)
         .css("height", newSize);
-    
+
     $(piece)
         .css('width', newSize * currentPieces[slot].size[0] + (currentPieces[slot].size[0] - 1) * spacing)
         .css("height", newSize * currentPieces[slot].size[1] + (currentPieces[slot].size[1] - 1) * spacing)
@@ -297,28 +297,28 @@ function updateDragbox(slot) {
     if (currentPieces[slot] == 'EMPTY') {
         return false
     }
-    
+
     // You'd think finding where to place a cursor would be easy right?
     // Guess again.
-    
+
     // non touch displays should have cursor centered in piece
     var centerCursor = {
-        bottom:$(".drag-container").height() / 2,
-        left:$(".drag-container").width() / 2
+        bottom: $(".drag-container").height() / 2,
+        left: $(".drag-container").width() / 2
     };
-    
+
     // But we must still account for the fact that some pieces grow and exceed 
     // the boundaries of the drag-container. If we do not account for the extra
     // chunk sticking out, the centering will be off
     var pieceHeight = (sizes.chunk() * currentPieces[slot].layout.length);
     var pieceWidth = (sizes.chunk() * currentPieces[slot].layout[0].length);
-    
+
     var containerPieceHDiff = pieceHeight - $(".drag-container").height()
     var containerPieceWDiff = pieceWidth - $(".drag-container").width()
-    
+
     if (containerPieceHDiff > 0) centerCursor.top = ($(".drag-container").height() + containerPieceHDiff) / 2
     if (containerPieceWDiff > 0) centerCursor.left = ($(".drag-container").width() + containerPieceWDiff) / 2;
-    
+
     // For mobile, we want to position the cursor in such a way that the player's finger does not
     // block the piece they are trying to position.
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -464,7 +464,7 @@ var updateHtml = {
             .animateNumber({
                 number: topScore + dScore
             }, 200);
-        if (!topScoreNotificationFired && dScore!==0 && !isGameOver) {
+        if (!topScoreNotificationFired && dScore !== 0 && !isGameOver) {
             $(".high-score").removeClass("hidden")
             $(".drag-container").draggable('disable')
             topScoreNotificationFired = true;
@@ -509,7 +509,9 @@ var updateHtml = {
         }
     },
     clearChunk: function (chunk) {
-        chunk.animate({backgroundColor: 'rgba(238, 228, 218, 0.35)'},250);
+        chunk.animate({
+            backgroundColor: 'rgba(238, 228, 218, 0.35)'
+        }, 250);
     },
     clearLines: function (cleared) {
         for (var r in cleared.row) {
@@ -576,14 +578,14 @@ function restart() {
         $(this).addClass("hidden")
     })
     isGameOver = false;
-    
+
     // re-enable dragging
     $(".drag-container").draggable('enable')
-    
+
     // reset score
     score = 0
     updateHtml.score(-score)
-    
+
     // reset the high score notification
     topScoreNotificationFired = false;
 
@@ -751,7 +753,7 @@ function dropPiece() {
 }
 
 // FIRSTRUN MAIN FUNCTION
-function init() {
+window.requestAnimationFrame(function () {
     initDynamicSizes();
     initGridHtml()
     initCSS();
@@ -761,7 +763,7 @@ function init() {
 
     if (!localStorage.getItem('score')) {
         Roll();
-        topScoreNotificationFired = true;         // don't show a HS overlay if it's the user's first time playing
+        topScoreNotificationFired = true; // don't show a HS overlay if it's the user's first time playing
         save()
     } else {
         load()
@@ -778,7 +780,7 @@ function init() {
         $(".paused").removeClass("hidden");
         $(".drag-container").draggable('disable')
     });
-    $(".social-score").click(function(){
+    $(".social-score").click(function () {
         var href = String.format("https://twitter.com/intent/tweet?hashtags=1212game&ref_src=twsrc%5Etfw&text=I%20just%20scored%20{0}%20points%20in%20a%20game%20called%201212!%20Can%20you%20do%20better%3F&tw_p=tweetbutton&url=prilik.ca/1212/&via=danielprilik", score)
         window.open(href);
     })
@@ -791,9 +793,8 @@ function init() {
             changePieceSize($(this).parent().attr('id').match(/\d+/)[0], 'shrink')
         })
     });
-}
-// Run
-window.onload = init;
+});
+
 
 // Specialized Utilities
 function getOffset(elem1, elem2) {
@@ -876,7 +877,7 @@ function load() {
 
     isGameOver = JSON.parse(localStorage.getItem('isGameOver'))
     if (isGameOver) $(".game-over").removeClass("hidden")
-    
+
     topScoreNotificationFired = JSON.parse(localStorage.getItem("topScoreNotificationFired"))
 }
 
@@ -884,8 +885,8 @@ function load() {
 function countProperties(obj) {
     var count = 0;
 
-    for(var prop in obj) {
-        if(obj.hasOwnProperty(prop))
+    for (var prop in obj) {
+        if (obj.hasOwnProperty(prop))
             ++count;
     }
 
@@ -941,7 +942,7 @@ function getScreenType() {
         viewportWidth = document.documentElement.clientWidth;
     }
 
-    
+
     if (viewportHeight >= viewportWidth) {
         if (viewportWidth <= 600) {
             return 'smallScreen'
@@ -967,7 +968,7 @@ function getScreenOrientation() {
         viewportHeight = document.documentElement.clientHeight;
         viewportWidth = document.documentElement.clientWidth;
     }
-    
+
     if (viewportHeight > viewportWidth) {
         return "portrait"
     } else {
