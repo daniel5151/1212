@@ -263,7 +263,6 @@ a {
     -o-animation-duration: 1s;
     animation-duration: 1s;
 }
-
 .game-over p {
     font-size: 60px;
     font-weight: bold;
@@ -278,6 +277,14 @@ a {
     height: 60px;
     line-height: 60px;
     margin-top: 160px;
+    -webkit-animation: anti-text 2s;
+    -moz-animation: anti-text 2s;
+    -o-animation: anti-text 2s;
+    animation: anti-text 2s;
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
 }
 
 .high-score span {
@@ -298,9 +305,22 @@ a {
 }
 
 .paused .keep-playing {
-    margin-top: 35%;
+    margin-top: 150px;
 }
-
+.paused .reset-topscore {
+    display: inline-block;
+    background: rgb(119, 110, 101);
+    border-radius: 3px;
+    padding: 0 10px;
+    text-decoration: none;
+    color: #f9f6f2;
+    height: 30px;
+    line-height: 30px;
+    cursor: pointer;
+}
+.tutorial h1 {
+    margin-top: 150px;
+}
 
 /*Pieces spawn area*/
 
@@ -512,6 +532,12 @@ a {
     .high-score span {
         font-size: 15px;
     }
+    .paused .keep-playing {
+        margin-top: 60px;
+    }
+    .tutorial h1 {
+        margin-top: 30px;
+    }
     .box {
         position: relative;
         width: 300px;
@@ -644,7 +670,7 @@ a {
         background-color: rgba(205, 193, 180, 0.6);
         border-radius: 3%;
         text-align: center;
-        top: 100px;
+        top: 109px;
         transition: opacity 1s;
         -webkit-transition: opacity 1s;
     }
@@ -664,6 +690,12 @@ a {
     }
     .high-score span {
         font-size: 15px;
+    }
+    .paused .keep-playing {
+        margin-top: 60px;
+    }
+    .tutorial h1 {
+        margin-top: 30px;
     }
     .box {
         position: relative;

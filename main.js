@@ -117,6 +117,7 @@ var Pieces = {
         color: '#9300ff'
     },
 };
+var resetTopScore = 0;
 var isGameOver = false;
 var score = 0;
 var topScore = 0;
@@ -596,7 +597,7 @@ function restart() {
 
     // re-enable dragging
     $(".drag-container").draggable('enable')
-
+    
     // reset score
     score = 0
     updateHtml.score(-score)
@@ -612,7 +613,15 @@ function restart() {
 
     // Roll new pieces
     Roll()
-
+    
+    // If we are resetiing the HS
+    if (resetTopScore == 4) {
+        resetTopScore = 0;
+        topScore = 0;
+        updateHtml.topScore(0);
+        topScoreNotificationFired = true;
+    }
+    
     save()
 }
 
@@ -758,6 +767,8 @@ window.requestAnimationFrame(function () {
     init.GridArray(sizes.grid);
 
     if (!localStorage.getItem('score')) {
+        $(".tutorial").removeClass("hidden");
+        
         Roll();
         topScoreNotificationFired = true; // don't show a HS overlay if it's the user's first time playing
         save()
@@ -780,6 +791,13 @@ window.requestAnimationFrame(function () {
         var href = String.format("https://twitter.com/intent/tweet?hashtags=1212game&ref_src=twsrc%5Etfw&text=I%20just%20scored%20{0}%20points%20in%20a%20game%20called%201212!%20Can%20you%20do%20better%3F&tw_p=tweetbutton&url=prilik.ca/1212/&via=danielprilik", score)
         window.open(href);
     })
+    $(".reset-topscore").click(function () {
+        resetTopScore+=1;
+        console.log(resetTopScore)
+        if (resetTopScore == 4) {
+            restart();
+        }
+    });
 
     $(window).resize(function () {
         updateDragbox(1)
