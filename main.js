@@ -262,7 +262,10 @@ function spawnPiece(type, slot, rotation, anti) {
 
     if (anti) {
         $(container).find('.chunk').each(function () {
-            if (!$(this).hasClass("placeholder")) $(this).addClass("anti-chunk")
+            if (!$(this).hasClass("placeholder")) {
+                $(this).addClass("anti-chunk")
+                $(this).css('webkitAnimationName', 'anti');
+            }
         })
     }
 

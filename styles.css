@@ -356,8 +356,6 @@ a {
 }
 
 .anti-chunk {
-    opacity: 50% !important;
-    background: rgba(0, 0, 0, 0.5) !important;
     /*Keyframes for anti animation are generated on the fly based on colors of pieces*/
     -webkit-animation: anti 2s;
     -moz-animation: anti 2s;
