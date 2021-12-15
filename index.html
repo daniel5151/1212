@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    
+
     <!--I'm a web-app. Treat me accordingly-->
     <meta name="viewport" content="width=device-width; initial-scale=1.0;">
 
@@ -19,43 +19,46 @@
     <meta property="og:image:height" content="1200" />
 
     <title>1212!</title>
-    
+
     <!--Play nice with i-devices-->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="HandheldFriendly" content="True">
     <meta name="format-detection" content="telephone=no">
-    
+
     <!--mmmmmm, icons-->
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="meta/apple-touch-icon.png">
-    
+
     <!--"Needs more jQuery" -StackOverflow -->
     <script src="js/jquery-1.11.3.min.js"></script>
     <link rel="js/jquery-ui-1.11.4/stylesheet" href="jquery-ui.min.css">
     <script src="js/jquery-ui-1.11.4/jquery-ui.min.js"></script>
     <script src="js/jquery.ui.touch-punch.min.js"></script>
-    
+
     <!--Based plugins-->
     <script src="js/jquery.animateNumber.min.js"></script>
     <script src="js/jquery.color.plus-names-2.1.2.min.js"></script>
-    
+
     <!--For Facebook, Twitter, Paypal, and Pause-->
     <link rel="stylesheet" href="css/font-awesome.min.css">
-    
+
     <!--Money?-->
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
-      (adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-7685690056756033",
-        enable_page_level_ads: true
-      });
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-7685690056756033",
+            enable_page_level_ads: true
+        });
     </script>
-	
+
     <!--All credit to 2048. This was taken straight from the 2048 repo-->
     <script src="js/animframe_polyfill.js"></script>
-	
+
+    <script src="js/micromodal.min.js"></script>
+    <link rel="stylesheet" href="css/micromodal.css">
+
     <!--My code :)-->
     <link rel="stylesheet" href="styles.css">
     <script src="main.js"></script>
@@ -65,6 +68,66 @@
     <div class="heading">
         <h1 class="title">1212!</h1>
         <div class="scores-container">
+            <div data-micromodal-trigger="modal-1" class="donate">Keep 1212 Online!</div>
+            <style>
+                .donate {
+                    display: inline-block;
+                    font-weight: bold;
+                    border-radius: 3px;
+                    color: white;
+                    text-align: center;
+                    position: relative;
+                    vertical-align: bottom;
+
+                    width: 190px;
+                    font-size: 18px;
+                    line-height: 39px;
+                    box-sizing: border-box;
+                    height: 55px;
+                    padding: 8px;
+                    background: rgb(119, 110, 101);
+
+                    cursor: pointer;
+                }
+
+                @media screen and (max-width: 600px) and (orientation: portrait) {
+                    .donate {
+                        display: inline-block;
+                        padding: 8px;
+                        font-size: 8px;
+                        width: 70px;
+                        height: 35px;
+                        line-height: 10px;
+                        font-weight: bold;
+                        border-radius: 3px;
+                        color: white;
+                        text-align: center;
+                        vertical-align: bottom;
+
+                        background: rgb(119, 110, 101);
+                        box-sizing: border-box;
+                    }
+                }
+
+                @media screen and (max-width: 820px) and (orientation: landscape) {
+                    .donate {
+                        display: inline-block;
+                        padding: 8px;
+                        font-size: 16px;
+                        width: 170px;
+                        height: 35px;
+                        line-height: 20px;
+                        font-weight: bold;
+                        border-radius: 3px;
+                        color: white;
+                        text-align: center;
+                        vertical-align: bottom;
+
+                        background: rgb(119, 110, 101);
+                        box-sizing: border-box;
+                    }
+                }
+            </style>
             <div class="score">0</div>
             <a class="pause">
                 <span><i class="fa fa-pause"></i></span>
@@ -89,7 +152,8 @@
             </div>
             <div class="high-score overlay hidden">
                 <p>You beat your
-                    <br>top score!</p>
+                    <br>top score!
+                </p>
                 <br>
                 <span>Congrats!</span>
                 <br>
@@ -123,37 +187,100 @@
     <div class="below-game">
         <br>
         <br>
-        <p><strong>HOW TO PLAY:</strong> Simply <strong>drag and drop</strong> the pieces onto the grid to make <strong>vertical and horizontal lines.</strong></p>
-        <p>When you make a line it <strong>disappears!</strong> The more lines you clear at once, <strong>the more points you get!</strong></p>
-        <p>You can place <strong><span>Flashing Pieces</span></strong> onto existing pieces to make them <strong>disappear!</strong></p>
+        <p><strong>HOW TO PLAY:</strong> Simply <strong>drag and drop</strong> the pieces onto the grid to make
+            <strong>vertical and horizontal lines.</strong>
+        </p>
+        <p>When you make a line it <strong>disappears!</strong> The more lines you clear at once, <strong>the more
+                points you get!</strong></p>
+        <p>You can place <strong><span>Flashing Pieces</span></strong> onto existing pieces to make them
+            <strong>disappear!</strong>
+        </p>
         <p>Just make sure you have enough room to place new pieces, or <strong>you lose!</strong></p>
         <hr>
-        <p>Created by <a href="http://prilik.com"><strong>Daniel Prilik</strong></a>. Conceptually similar to <a href="http://1010ga.me/"><strong>1010! by Gram Games.</strong></a> Aesthetically inspired by <a href="http://gabrielecirulli.github.io/2048/"><strong>2048 by Gabriele Cirulli.</strong></a></p>
+        <p>Created by <a href="http://prilik.com"><strong>Daniel Prilik</strong></a>. Conceptually similar to <a
+                href="http://1010ga.me/"><strong>1010! by Gram Games.</strong></a> Aesthetically inspired by <a
+                href="http://gabrielecirulli.github.io/2048/"><strong>2048 by Gabriele Cirulli.</strong></a></p>
         <hr>
-		<p>You can check out the source code on my <a href="https://github.com/daniel5151/1212/">GitHub!</a>
-		<hr>
+        <p>You can check out the source code on my <a href="https://github.com/daniel5151/1212/">GitHub!</a>
+        </p>
+        <hr>
+        <p><b>Patrons:</b></p>
+        <p>
+        <ul>
+            <li>You could be the first!</li>
+        </ul>
+        </p>
+        <hr>
         <div class="share">
             <!--Facebook-->
-            <a class="facebook-button" target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=prilik.ca/1212/"><i class="fa fa-facebook"></i> Share</a>
+            <a class="facebook-button" target="_blank"
+                href="http://www.facebook.com/sharer/sharer.php?u=prilik.ca/1212/"><i class="fa fa-facebook"></i>
+                Share</a>
             <!--Twitter-->
-            <a class="tweet-button" href="https://twitter.com/intent/tweet?hashtags=1212game&ref_src=twsrc%5Etfw&text=Check%20out%201212!%2C%20a%20game%20where%20you%20place%20pieces%2C%20make%20lines%2C%20and%20score%20points!&tw_p=tweetbutton&url=prilik.ca/1212/&via=danielprilik" target="_blank"><i class="fa fa-twitter"></i> Tweet</a>
-            <!--Paypal-->
-            <form class="paypal-form" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="B65FKZTU6DH9C">
-                <button type="submit" value="" name="submit" class="paypal-button"><i class='fa fa-paypal'></i> Donate</button>
+            <a class="tweet-button"
+                href="https://twitter.com/intent/tweet?hashtags=1212game&ref_src=twsrc%5Etfw&text=Check%20out%201212!%2C%20a%20game%20where%20you%20place%20pieces%2C%20make%20lines%2C%20and%20score%20points!&tw_p=tweetbutton&url=prilik.ca/1212/&via=danielprilik"
+                target="_blank"><i class="fa fa-twitter"></i> Tweet</a>
+            <!--Ko-fi-->
+            <form class="paypal-form" action="https://ko-fi.com/prilik" target="_blank">
+                <button class="paypal-button"><i class='fa fa-paypal'></i> Donate</button>
             </form>
         </div>
         <br>
     </div>
+    <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
+        <div class="modal__overlay" tabindex="-1">
+            <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+                <header class="modal__header">
+                    <h2 class="modal__title" id="modal-1-title"> 1212! needs your help!</h2> <button
+                        class="modal__close" aria-label="Close modal" data-micromodal-close=""></button>
+                </header>
+                <div class="modal__content" id="modal-1-content">
+                    <p>1212.rocks has been online for >6 years now, costing me ~$15/year to keep the website alive. 💸
+                    </p>
+                    <p>While I've renewed the domain for 2022, I need a bit of help from you - <b>the players</b> - to
+                        renew the domain for 2023 (and onwards).</p>
+                    <p>If you've been enjoying 1212!, please consider donating to my <a
+                            href="https://ko-fi.com/prilik">Ko-fi page</a>!
+                    </p>
+                    <hr>
+                    <p>If you donate $1 or more, your name will be added to the "Patrons" section at the bottom
+                        of this page.
+                    </p>
+                    <p>For $3 or more, I'll also link to any website you'd like (within reason). e.g:
+                        instagram, twitter, etc </p>
+                    <hr>
+                    <p>Thanks again for your ongoing support, and have fun!</p>
+                    <p>Cheers,<br>Daniel Prilik</p>
+                </div>
+                <footer class="modal__footer">
+                    <a class="modal__btn modal__btn-primary" href="https://ko-fi.com/prilik">Donate</a>
+                    <button class="modal__btn" data-micromodal-close=""
+                        aria-label="Close this dialog window">Close</button>
+                </footer>
+            </div>
+        </div>
+    </div>
     <script>
-      (function(d,a,n,i,e,l,p){d['GoogleAnalyticsObject']=e;d[e]=d[e]||function(){
-      (d[e].q=d[e].q||[]).push(arguments)},d[e].l=1*new Date();l=a.createElement(n),
-      p=a.getElementsByTagName(n)[0];l.async=1;l.src=i;p.parentNode.insertBefore(l,p)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        MicroModal.init();
 
-      ga('create', 'UA-91699543-1', 'auto');
-      ga('send', 'pageview');
+        var time_now = new Date().getTime();
+        var shown_modal = localStorage.getItem('shown-donate-modal');
+        // 30 days between popups
+        if (time_now - shown_modal > 1000 * 60 * 60 * 24 * 30) {
+            MicroModal.show('modal-1');
+            localStorage.setItem('shown-donate-modal', new Date().getTime());
+        }
+    </script>
+    <script>
+        (function (d, a, n, i, e, l, p) {
+            d['GoogleAnalyticsObject'] = e; d[e] = d[e] || function () {
+                (d[e].q = d[e].q || []).push(arguments)
+            }, d[e].l = 1 * new Date(); l = a.createElement(n),
+                p = a.getElementsByTagName(n)[0]; l.async = 1; l.src = i; p.parentNode.insertBefore(l, p)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-91699543-1', 'auto');
+        ga('send', 'pageview');
     </script>
 </body>
 

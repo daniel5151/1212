@@ -89,7 +89,6 @@ a {
     padding: 15px 15px;
     font-size: 25px;
     height: 25px;
-    line-height: 47px;
     font-weight: bold;
     border-radius: 3px;
     color: white;
@@ -487,7 +486,6 @@ a {
         display: inline-block;
         background: rgb(119, 110, 101);
         font-size: 15px;
-        line-height: 15px;
         padding: 10px 10px;
         height: 15px;
         border-radius: 3px;
@@ -638,7 +636,6 @@ a {
         display: inline-block;
         background: rgb(119, 110, 101);
         font-size: 15px;
-        line-height: 15px;
         padding: 10px 10px;
         height: 15px;
         border-radius: 3px;
@@ -739,7 +736,7 @@ a {
         border-radius: 10%;
         background: rgba(238, 228, 218, 0.35);
     }
-    
+
     .below-game {
         width: 410px;
         height: 25px;
