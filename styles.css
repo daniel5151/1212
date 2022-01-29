@@ -203,6 +203,10 @@ a {
 	display: inline-block;
 }
 
+li {
+    margin-bottom: 0.5em;
+}
+
 /* Overlays */
 
 .hidden {
