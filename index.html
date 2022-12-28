@@ -44,13 +44,13 @@
     <!--For Facebook, Twitter, Paypal, and Pause-->
     <link rel="stylesheet" href="css/font-awesome.min.css">
 
-    <!--Money?-->
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZMDCDQLNXG"></script>
     <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-7685690056756033",
-            enable_page_level_ads: true
-        });
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-ZMDCDQLNXG');
     </script>
 
     <!--All credit to 2048. This was taken straight from the 2048 repo-->
@@ -238,22 +238,15 @@
                         class="modal__close" aria-label="Close modal" data-micromodal-close=""></button>
                 </header>
                 <div class="modal__content" id="modal-1-content">
-                    <p>1212.rocks has been online for >6 years now, costing me ~$15/year to keep the website alive. 💸
+                    <p>1212.rocks has been online for >7 years now, costing me ~$15/year to keep the website online 💸
                     </p>
-                    <p>While I've renewed the domain for 2022, I need a bit of help from you - <b>the players</b> - to
-                        keep 1212.rocks online for years to come.</p>
-                    <p>If you've been enjoying 1212!, please consider donating to my <a
-                            href="https://ko-fi.com/prilik">Ko-fi page</a>!
-                    </p>
+                    <p><b> Thanks to the generous donations of a few dedicated players, I've gone ahead and renewed the
+                            domain through to the end of 2023! </b></p>
+                    <p>That said, website renewal prices are a recurring expense, so if you've been enjoying the game,
+                        do consider donating to keep 1212! online for years to come!</p>
                     <hr>
-                    <p><b>Thanks to a few generous donors, I've recouped my hosting costs for 2022! Thank you so
-                            much!</b></p>
-                    <hr>
-                    <p>If you donate $1 or more, your name will be added to the "Patrons" section at the bottom
-                        of this page.
-                    </p>
-                    <p>For $3 or more, I'll also link to any website you'd like (within reason). e.g:
-                        instagram, twitter, etc...</p>
+                    <p>For just $1, your name will be added to the "Patrons" section at the bottom of this page.</p>
+                    <p>For $3 (or more), I'll also link to any website you'd like! e.g: instagram, twitter, etc...</p>
                     <hr>
                     <p>Thanks again for your ongoing support, and have fun!</p>
                     <p>Cheers,<br>Daniel Prilik</p>
@@ -276,17 +269,6 @@
             MicroModal.show('modal-1');
             localStorage.setItem('shown-donate-modal', new Date().getTime());
         }
-    </script>
-    <script>
-        (function (d, a, n, i, e, l, p) {
-            d['GoogleAnalyticsObject'] = e; d[e] = d[e] || function () {
-                (d[e].q = d[e].q || []).push(arguments)
-            }, d[e].l = 1 * new Date(); l = a.createElement(n),
-                p = a.getElementsByTagName(n)[0]; l.async = 1; l.src = i; p.parentNode.insertBefore(l, p)
-        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-        ga('create', 'UA-91699543-1', 'auto');
-        ga('send', 'pageview');
     </script>
 </body>
 
